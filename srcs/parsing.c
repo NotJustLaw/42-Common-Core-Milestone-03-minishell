@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/20 15:07:35 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/23 18:28:25 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,9 @@ t_command *parser(char *line)
 	new_cmd = NULL;
 	new_line = ft_calloc(ft_strlen(line) + 1, 3);
 	if (!new_line)
+		return (NULL);
+	printf("about to check pipes\n");
+	if (!pipe_checker(line))
 		return (NULL);
 	indexes[0] = 0;
 	indexes[1] = parser2(line, new_line, 0);

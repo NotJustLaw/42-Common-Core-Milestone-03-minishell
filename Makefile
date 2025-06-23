@@ -6,13 +6,13 @@
 #    By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 15:27:34 by hcarrasq          #+#    #+#              #
-#    Updated: 2025/06/19 14:52:10 by hcarrasq         ###   ########.fr        #
+#    Updated: 2025/06/23 18:05:11 by hcarrasq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
-SRCS_FILES = main.c parsing.c commands_utils.c
+SRCS_FILES = main.c parsing.c commands_utils.c checkers.c
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SRCS_FILES))
 

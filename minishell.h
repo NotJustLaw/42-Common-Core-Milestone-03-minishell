@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/19 17:52:24 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/23 18:12:38 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ t_shell	*prog_data();
 t_command *parser(char *line);
 void	append_commands(t_command *new_node);
 void	free_commands(t_command *commands);
+bool    pipe_checker(char *line);
 
 
 #endif
