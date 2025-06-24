@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/23 18:12:38 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/24 16:10:47 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <aio.h>
 # include <stddef.h>	
 # include <sys/time.h>
+# include <signal.h>
 
 
 typedef struct s_command
@@ -44,9 +45,6 @@ typedef struct s_shell
 	char	**envp;
 	t_command	*commands;
 	int		exit_status;
-	int		stdin_fd;
-	int		stdout_fd;
-	int		heredoc_fd;
 	int		is_running;
 }	t_shell;
 
@@ -57,6 +55,6 @@ t_command *parser(char *line);
 void	append_commands(t_command *new_node);
 void	free_commands(t_command *commands);
 bool    pipe_checker(char *line);
-
+bool	redirection_checker(char *line);
 
 #endif

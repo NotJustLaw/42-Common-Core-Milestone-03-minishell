@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/23 18:28:25 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/24 16:02:08 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	quote_expansion(char *line, char *new_line)
 		return (-1);
 	else if (*(line - 1) == '>' && *line == '<')
 		return (-1);
-	else if (*(line + 1) == '>' || *(line + 1) == '<')
+	if (*(line) == '>' || *(line) == '<')
 		return (-1);
 	*new_line++ = '\2';
 	return (i);
@@ -96,6 +96,9 @@ t_command *parser(char *line)
 		return (NULL);
 	printf("about to check pipes\n");
 	if (!pipe_checker(line))
+		return (NULL);
+	printf("about to check redirections\n");
+	if (!redirection_checker(line))
 		return (NULL);
 	indexes[0] = 0;
 	indexes[1] = parser2(line, new_line, 0);

@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/19 17:54:44 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/24 18:10:57 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,15 @@
 // 	return (&prog_data);
 // }
 
+static volatile int keepRunning = 1;
+
+void	int_handler(int dummy)
+{
+	(void)dummy;
+	printf("minishell > ");
+	keepRunning = 0;
+}
+
 int main(int ac, char **av)
 {
 	// echo
@@ -32,7 +41,8 @@ int main(int ac, char **av)
 	
 	(void)ac;
 	(void)av;
-	while (1)
+	signal(SIGINT, int_handler);
+	while (keepRunning)
 	{
 		input = readline("minishell > ");
 		if (!input)
