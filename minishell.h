@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/24 16:10:47 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/01 17:59:56 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef	MINISHELL_H
 # define MINISHELL_H
 
-# include "libft/libft.h"
+# include "libraries/libft/libft.h"
 # include <pthread.h>
 # include <stdio.h>
 # include <unistd.h>
@@ -33,28 +33,30 @@
 
 typedef struct s_command
 {
-	char		**args;
-	char		*dlm;
-	int			input_fd;
-	int			output_fd;
-	struct s_command *next;
+	char				**args;
+	char				*dlm;
+	int					input_fd;
+	int					output_fd;
+	struct s_command	*next;
+
+	//Probably we will need to add more args for the execution
 }	t_command;
 
 typedef struct s_shell
 {
-	char	**envp;
+	char		**envp;
 	t_command	*commands;
-	int		exit_status;
-	int		is_running;
+	int			exit_status;
+	int			is_running;
 }	t_shell;
 
 //main
 t_shell	*prog_data();
 
-t_command *parser(char *line);
-void	append_commands(t_command *new_node);
-void	free_commands(t_command *commands);
-bool    pipe_checker(char *line);
-bool	redirection_checker(char *line);
+t_command	*parser(char *line);
+void		append_commands(t_command *new_node);
+void		free_commands(t_command *commands);
+bool		pipe_checker(char *line);
+bool		redirection_checker(char *line);
 
 #endif

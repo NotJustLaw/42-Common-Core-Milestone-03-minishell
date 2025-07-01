@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   checkers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/24 14:44:42 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/01 17:54:14 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool    pipe_checker(char *line)
+bool	pipe_checker(char *line)
 {
 	int i;
 	int found_pipes;
