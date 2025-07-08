@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/24 16:02:08 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:11:55 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ static int parser2(char *line, char *new_line, int l)
 		else if (flag == 0 && (*line == '<' || *line == '>'))
 		{	
 			i = quote_expansion(line, new_line);
-			printf("int i = :%d\n", i);
 			if (i < 0)
 				return (-1);
 			line += i;
@@ -99,6 +98,9 @@ t_command *parser(char *line)
 		return (NULL);
 	printf("about to check redirections\n");
 	if (!redirection_checker(line))
+		return (NULL);
+	printf("about to check expansions\n");
+	if (!expansion_chekcker(line))
 		return (NULL);
 	indexes[0] = 0;
 	indexes[1] = parser2(line, new_line, 0);

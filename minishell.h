@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/24 16:10:47 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:10:43 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,6 @@ void	append_commands(t_command *new_node);
 void	free_commands(t_command *commands);
 bool    pipe_checker(char *line);
 bool	redirection_checker(char *line);
+bool	expansion_chekcker(char *line);
 
 #endif

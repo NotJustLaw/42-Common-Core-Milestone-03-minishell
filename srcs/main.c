@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/24 18:10:57 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:14:09 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,6 @@
 
 static volatile int keepRunning = 1;
 
-void	int_handler(int dummy)
-{
-	(void)dummy;
-	printf("minishell > ");
-	keepRunning = 0;
-}
-
 int main(int ac, char **av)
 {
 	// echo
@@ -41,8 +34,7 @@ int main(int ac, char **av)
 	
 	(void)ac;
 	(void)av;
-	signal(SIGINT, int_handler);
-	while (keepRunning)
+	while (1)
 	{
 		input = readline("minishell > ");
 		if (!input)
