@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/28 13:14:09 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/07/14 17:35:18 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,12 @@
 
 #include "../minishell.h"
 
-// t_shell	*prog_data(void)
-// {
-// 	static t_shell	prog_data;
+t_shell	*prog_data(void)
+{
+	static t_shell	prog_data;
 
-// 	return (&prog_data);
-// }
-
-static volatile int keepRunning = 1;
+	return (&prog_data);
+}
 
 int main(int ac, char **av)
 {
@@ -31,9 +29,10 @@ int main(int ac, char **av)
 	// |
 	// ls
 	char	*input = NULL;
-	
+
 	(void)ac;
 	(void)av;
+	full_sighandler();
 	while (1)
 	{
 		input = readline("minishell > ");
@@ -50,7 +49,7 @@ int main(int ac, char **av)
 		free(input);
 	}
 	// -la";
-	// char *str = ft_strdup("echo<<p hello \"| wc\" | ls -la");
+	// char *str = ft_strdup(	);
 	//char *str2 = "echo2hello2\"| wc\"2|2ls2-la";
 	// echo<<
 	
@@ -58,9 +57,3 @@ int main(int ac, char **av)
 	return(0);
 }
 
-t_shell	*prog_data(void)
-{
-	static t_shell	prog_data;
-
-	return (&prog_data);
-}
