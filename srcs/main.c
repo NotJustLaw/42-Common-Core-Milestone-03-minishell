@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/14 17:35:18 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/15 17:06:49 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,6 @@ t_shell	*prog_data(void)
 
 int main(int ac, char **av)
 {
-	// echo
-	// hello
-	// \"| wc\"
-	// |
-	// ls
 	char	*input = NULL;
 
 	(void)ac;
@@ -48,12 +43,5 @@ int main(int ac, char **av)
 		parser(input);
 		free(input);
 	}
-	// -la";
-	// char *str = ft_strdup(	);
-	//char *str2 = "echo2hello2\"| wc\"2|2ls2-la";
-	// echo<<
-	
-
 	return(0);
 }
-

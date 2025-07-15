@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/14 12:54:13 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/15 18:13:54 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,15 @@
 # include <signal.h>
 
 
-typedef struct s_command
-{
-	char		**args;
-	char		*dlm;
-	int			input_fd;
-	int			output_fd;
-	struct s_command *next;
-}	t_command;
+	typedef struct s_command
+	{
+		char		**args;
+		char		*dlm;
+		int			input_fd;
+		int			output_fd;
+		char 		*temp_env;
+		struct s_command *next;
+	}	t_command;
 
 typedef struct s_shell
 {
@@ -59,5 +60,7 @@ bool	redirection_checker(char *line);
 bool	expansion_chekcker(char *line);
 void	full_sighandler();
 void	sigint_handler(int sig);
+bool	we_need_space(char *line);
+// static void	*free_split(char **str);
 
 #endif

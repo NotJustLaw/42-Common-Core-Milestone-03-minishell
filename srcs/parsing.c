@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/28 13:11:55 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/07/15 12:09:59 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,7 @@ t_command *parser(char *line)
 	new_line = ft_calloc(ft_strlen(line) + 1, 3);
 	if (!new_line)
 		return (NULL);
-	printf("about to check pipes\n");
-	if (!pipe_checker(line))
-		return (NULL);
-	printf("about to check redirections\n");
-	if (!redirection_checker(line))
-		return (NULL);
-	printf("about to check expansions\n");
-	if (!expansion_chekcker(line))
+	if (!we_need_space(line))
 		return (NULL);
 	indexes[0] = 0;
 	indexes[1] = parser2(line, new_line, 0);

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   space_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 13:16:54 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/06/30 14:43:21 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/07/15 12:25:56 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* #include "../minishell.h"
+#include "../minishell.h"
 
-bool	we_need_space(char **line)
+bool	we_need_space(char *line)
 {
 	printf("about to check pipes\n");
 	if (!pipe_checker(line))
@@ -24,4 +24,14 @@ bool	we_need_space(char **line)
 	if (!expansion_chekcker(line))
 		return (false);
 	return (true);
+}
+
+/* static void	*free_split(char **str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+		free(str[i++]);
+	return (free(str), NULL);
 } */

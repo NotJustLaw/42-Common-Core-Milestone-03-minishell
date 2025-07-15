@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checkers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/30 15:36:11 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/07/15 18:06:00 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,27 +72,50 @@ bool	redirection_checker(char *line)
 bool	expansion_chekcker(char *line)
 {
 	int	i;
-
+	bool	in_single_quotes;
+	bool	in_double_quotes;
+	
+	in_single_quotes = false;
+	in_double_quotes = false;
 	i = 0;
 	while (line[i])
 	{
-		if (line[i] == '$')
+		if (line[i] == '\'' && !in_double_quotes)
+		{
+			in_single_quotes = !in_single_quotes;
+			i++;
+		}
+		else if (line[i] == '\"' && !in_single_quotes)
+		{
+			in_double_quotes = !in_double_quotes;
+			i++;
+		}
+		else if (line[i] == '$' && !in_single_quotes)
 		{
 			i++;
+			if (!line[i])
+				return (false);
 			if (ft_isalpha(line[i]) || (line[i] == '_' || line[i] == '?'))
-				continue;
+			{
+				i++;
+				if (line[i] == '?')
+				{
+					i++;
+					continue;
+				}
+				while (line[i] && !is_wspace(line[i]))
+				{
+					if (!ft_isalnum(line[i]))
+						return(false);
+					i++;
+				}
+			}
 			else
 				return (false);
 			i++;
-			while (!is_wspace(line[i]) || line[i])
-			{
-				if (!ft_isalnum(line[i]))
-					return(false);
-				i++;
-			}
-			return (true);
 		}
-		i++;
+		else
+			i++;
 	}
 	return (true);
 }
