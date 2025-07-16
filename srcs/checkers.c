@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/15 18:06:00 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/16 17:23:45 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ bool	expansion_chekcker(char *line)
 				return (false);
 			if (ft_isalpha(line[i]) || (line[i] == '_' || line[i] == '?'))
 			{
-				i++;
 				if (line[i] == '?')
 				{
 					i++;
@@ -112,7 +111,6 @@ bool	expansion_chekcker(char *line)
 			}
 			else
 				return (false);
-			i++;
 		}
 		else
 			i++;

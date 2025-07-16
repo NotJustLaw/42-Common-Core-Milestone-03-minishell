@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/15 12:09:59 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:07:39 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,22 @@ t_command *parser(char *line)
 		}
 		printf("\n");
 		cmd_iter = cmd_iter->next;
+		i++;
+	}
+	expansion_trade();
+	printf("ola\n");
+	t_command *cmd_iter2 = prog_data()->commands;
+	i = 0;
+	while (cmd_iter2 && i <= indexes[1])
+	{
+		int l = 0;
+		while (cmd_iter2->args && cmd_iter2->args[l])
+		{
+			printf("args on command[%d]:%s\n", i, cmd_iter2->args[l]);
+			l++;
+		}
+		printf("\n");
+		cmd_iter2 = cmd_iter2->next;
 		i++;
 	}
 	free(new_line);

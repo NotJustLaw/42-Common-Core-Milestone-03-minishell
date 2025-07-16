@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/15 18:13:54 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:57:17 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,11 @@ void	full_sighandler();
 void	sigint_handler(int sig);
 bool	we_need_space(char *line);
 // static void	*free_split(char **str);
+char	*ft_strndup(const char *s1, size_t n);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+int 	strncat_realloc(char **dest, const char *source, size_t n);
+char 	*expand_argument(const char *arg);
+void 	expansion_trade(void);
+
 
 #endif
