@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/01 17:59:56 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:58:40 by justlaw          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define MINISHELL_H
 
 # include "libraries/libft/libft.h"
+# include "libraries/pipex/src/pipex.h"
+# include "env_manager.h"
 # include <pthread.h>
 # include <stdio.h>
 # include <unistd.h>
@@ -30,7 +32,6 @@
 # include <sys/time.h>
 # include <signal.h>
 
-
 typedef struct s_command
 {
 	char				**args;
@@ -39,7 +40,12 @@ typedef struct s_command
 	int					output_fd;
 	struct s_command	*next;
 
-	//Probably we will need to add more args for the execution
+	//Execution
+	char				*infile;
+	char				*outfile;
+	int					append;
+	int					heredoc;
+	char				*delimiter;
 }	t_command;
 
 typedef struct s_shell
@@ -58,5 +64,29 @@ void		append_commands(t_command *new_node);
 void		free_commands(t_command *commands);
 bool		pipe_checker(char *line);
 bool		redirection_checker(char *line);
+
+//Execution
+void	ft_execve(t_shell *shell, t_command *cmds);
+void	execute_all(t_command *cmds, t_shell *shell);
+int		execute_single_command(t_command *cmds, t_shell *shell);
+int		execute_pipeline(t_command *cmds, t_shell *shell);
+
+//Builtin
+int		execute_builtin(char **args, t_shell *shell);
+int		builtin_chkr(char **args);
+
+//Builtin cmds
+int		builtin_echo(char **args);
+int		builtin_cd(char **args);
+int		builtin_pwd(char **args);
+int		builtin_export(char **args);
+int		builtin_unset(char **args);
+int		builtin_env(char **args);
+int		builtin_exit(char **args);
+
+//Env Manager
+
+//Env Manager Utils
+int		strcnt(char **envp);
 
 #endif

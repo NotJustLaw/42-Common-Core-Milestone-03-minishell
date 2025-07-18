@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/24 18:10:57 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/02 13:39:18 by justlaw          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,12 @@ void	int_handler(int dummy)
 
 int main(int ac, char **av)
 {
-	// echo
-	// hello
-	// \"| wc\"
-	// |
-	// ls
 	char	*input = NULL;
+	t_shell	*shell;
 	
 	(void)ac;
 	(void)av;
+	shell = prog_data();
 	signal(SIGINT, int_handler);
 	while (keepRunning)
 	{
@@ -55,6 +52,7 @@ int main(int ac, char **av)
 		free_commands(prog_data()->commands);
 		prog_data()->commands = NULL;
 		parser(input);
+		execute_all(prog_data()->commands, shell);
 		free(input);
 	}
 	// -la";

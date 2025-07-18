@@ -1,14 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execution_utils.c                                  :+:      :+:    :+:   */
+/*   builtin_commands_2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/01 18:08:47 by skuhlcke          #+#    #+#             */
-/*   Updated: 2025/07/01 18:08:59 by skuhlcke         ###   ########.fr       */
+/*   Created: 2025/07/02 13:07:09 by justlaw           #+#    #+#             */
+/*   Updated: 2025/07/02 13:45:09 by justlaw          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+int	builtin_env(char **args)
+{
+	
+}
+
+int	builtin_exit(char **args)
+{
+	
+}
