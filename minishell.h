@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/16 15:57:17 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/08/07 16:11:51 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,19 @@
 	typedef struct s_command
 	{
 		char		**args;
-		char		*dlm;
 		int			input_fd;
 		int			output_fd;
 		char 		*temp_env;
 		struct s_command *next;
+		char                *infile;
+		char                *outfile;
+		int                    append;
+		int                    heredoc;
+		char                *delimiter;
 	}	t_command;
 
 typedef struct s_shell
-{
+{	
 	char	**envp;
 	t_command	*commands;
 	int		exit_status;
@@ -67,6 +71,7 @@ void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 int 	strncat_realloc(char **dest, const char *source, size_t n);
 char 	*expand_argument(const char *arg);
 void 	expansion_trade(void);
+void	check_redirs(void);
 
 
 #endif
