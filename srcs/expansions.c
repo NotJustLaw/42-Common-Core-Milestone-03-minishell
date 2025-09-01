@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:50:34 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/21 11:05:26 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/01 18:27:24 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,8 @@ char *expand_argument(const char *arg)
 	int i = 0;
 	bool in_single_quotes = false;
 	bool in_double_quotes = false;
-	char *result = calloc(1, 1);
+	char *result = NULL;
 
-	if (!result)
-		return (NULL);
 	while (arg[i])
 	{
 		if (arg[i] == '\'' && !in_double_quotes)
@@ -101,11 +99,14 @@ void expansion_trade(void)
 	{
 		for (int i = 0; cmd->args && cmd->args[i]; i++)
 		{
-			char *expanded = expand_argument(cmd->args[i]);
-			if (!expanded)
-				continue;
-			free(cmd->args[i]);
-			cmd->args[i] = expanded;
+			if (ft_strchr2(cmd->args[i], '$'))
+			{
+				char *expanded = expand_argument(cmd->args[i]);
+				if (!expanded)
+					continue;
+				free(cmd->args[i]);
+				cmd->args[i] = expanded;
+			}
 		}
 		cmd = cmd->next;
 	}

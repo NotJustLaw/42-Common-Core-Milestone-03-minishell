@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/08/07 16:11:51 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/09/01 18:27:36 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int 	strncat_realloc(char **dest, const char *source, size_t n);
 char 	*expand_argument(const char *arg);
 void 	expansion_trade(void);
 void	check_redirs(void);
+bool 	ft_strchr2(const char *s, int c);
 
 
 #endif

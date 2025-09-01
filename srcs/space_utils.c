@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 13:16:54 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/07/16 16:07:53 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/01 18:26:29 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,4 +107,22 @@ char	*ft_strndup(const char *s1, size_t n)
 	}
 	frase[i] = '\0';
 	return (frase);
+}
+
+bool ft_strchr2(const char *s, int c)
+{
+	int		i;
+	char	*dest;
+
+	i = 0;
+	dest = (char *)s;
+	while (s[i])
+	{
+		if (s[i] == (unsigned char)c)
+			return (true);
+		i++;
+	}
+	if (s[i] == (unsigned char)c)
+		return (true);
+	return (false);
 }
