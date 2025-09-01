@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< HEAD
 /*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
 /*   Updated: 2025/07/01 17:59:56 by skuhlcke         ###   ########.fr       */
+=======
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
+/*   Updated: 2025/08/07 16:11:51 by henrique-re      ###   ########.fr       */
+>>>>>>> santinothegoat
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +49,23 @@ typedef struct s_command
 	//Probably we will need to add more args for the execution
 }	t_command;
 
+/* 	typedef struct s_command
+	{
+		char		**args;
+		int			input_fd;
+		int			output_fd;
+		char 		*temp_env;
+		struct s_command *next;
+		char                *infile;
+		char                *outfile;
+		int                    append;
+		int                    heredoc;
+		char                *delimiter;
+	}	t_command */;
+
 typedef struct s_shell
-{
-	char		**envp;
+{	
+	char	**envp;
 	t_command	*commands;
 	int			exit_status;
 	int			is_running;
@@ -58,5 +79,24 @@ void		append_commands(t_command *new_node);
 void		free_commands(t_command *commands);
 bool		pipe_checker(char *line);
 bool		redirection_checker(char *line);
+=======
+t_command *parser(char *line);
+void	append_commands(t_command *new_node);
+void	free_commands(t_command *commands);
+bool    pipe_checker(char *line);
+bool	redirection_checker(char *line);
+bool	expansion_chekcker(char *line);
+void	full_sighandler();
+void	sigint_handler(int sig);
+bool	we_need_space(char *line);
+// static void	*free_split(char **str);
+char	*ft_strndup(const char *s1, size_t n);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+int 	strncat_realloc(char **dest, const char *source, size_t n);
+char 	*expand_argument(const char *arg);
+void 	expansion_trade(void);
+void	check_redirs(void);
+
+>>>>>>> santinothegoat
 
 #endif

@@ -1,47 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   signal_handling.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/15 17:06:49 by hcarrasq         ###   ########.fr       */
+/*   Created: 2025/07/12 16:43:10 by hcarrasq          #+#    #+#             */
+/*   Updated: 2025/07/15 12:11:36 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #include "../minishell.h"
 
-t_shell	*prog_data(void)
+void	sigint_handler(int sig)
 {
-	static t_shell	prog_data;
-
-	return (&prog_data);
+	(void)sig;
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
-
-int main(int ac, char **av)
+void	full_sighandler()
 {
-	char	*input = NULL;
+	
+	struct sigaction sa;
 
-	(void)ac;
-	(void)av;
-	full_sighandler();
-	while (1)
-	{
-		input = readline("minishell > ");
-		if (!input)
-		{
-			printf("exit\n");
-			exit(0);
-		}
-		if (*input)
-			add_history(input);
-		free_commands(prog_data()->commands);
-		prog_data()->commands = NULL;
-		parser(input);
-		free(input);
-	}
-	return(0);
+	sa.sa_handler = sigint_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART;
+	sigaction(SIGINT, &sa, NULL);
+
+	sa.sa_handler = SIG_IGN;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGQUIT, &sa, NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/24 16:02:08 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:07:39 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ static int parser2(char *line, char *new_line, int l)
 		else if (flag == 0 && (*line == '<' || *line == '>'))
 		{	
 			i = quote_expansion(line, new_line);
-			printf("int i = :%d\n", i);
 			if (i < 0)
 				return (-1);
 			line += i;
@@ -94,11 +93,7 @@ t_command *parser(char *line)
 	new_line = ft_calloc(ft_strlen(line) + 1, 3);
 	if (!new_line)
 		return (NULL);
-	printf("about to check pipes\n");
-	if (!pipe_checker(line))
-		return (NULL);
-	printf("about to check redirections\n");
-	if (!redirection_checker(line))
+	if (!we_need_space(line))
 		return (NULL);
 	indexes[0] = 0;
 	indexes[1] = parser2(line, new_line, 0);
@@ -134,6 +129,22 @@ t_command *parser(char *line)
 		}
 		printf("\n");
 		cmd_iter = cmd_iter->next;
+		i++;
+	}
+	expansion_trade();
+	printf("ola\n");
+	t_command *cmd_iter2 = prog_data()->commands;
+	i = 0;
+	while (cmd_iter2 && i <= indexes[1])
+	{
+		int l = 0;
+		while (cmd_iter2->args && cmd_iter2->args[l])
+		{
+			printf("args on command[%d]:%s\n", i, cmd_iter2->args[l]);
+			l++;
+		}
+		printf("\n");
+		cmd_iter2 = cmd_iter2->next;
 		i++;
 	}
 	free(new_line);

@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   checkers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/01 17:54:14 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/01 17:05:22 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../minishell.h"
 
@@ -59,15 +60,61 @@ bool	redirection_checker(char *line)
 		else if (is_wspace(line[i]) && found_redir == 1)
 			found_redir = 1;
 		else if (line[i] == '|' && found_redir == 1)
-		{
-			printf("what\n");
 			return (false);
-		}
 		else
 			found_redir = 0;
 		i++;
 	}
 	if (found_redir == 1)
 		return (false);
+	return (true);
+}
+
+bool	expansion_chekcker(char *line)
+{
+	int	i;
+	bool	in_single_quotes;
+	bool	in_double_quotes;
+	
+	in_single_quotes = false;
+	in_double_quotes = false;
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '\'' && !in_double_quotes)
+		{
+			in_single_quotes = !in_single_quotes;
+			i++;
+		}
+		else if (line[i] == '\"' && !in_single_quotes)
+		{
+			in_double_quotes = !in_double_quotes;
+			i++;
+		}
+		else if (line[i] == '$' && !in_single_quotes)
+		{
+			i++;
+			if (!line[i])
+				return (false);
+			if (ft_isalpha(line[i]) || (line[i] == '_' || line[i] == '?'))
+			{
+				if (line[i] == '?')
+				{
+					i++;
+					continue;
+				}
+				while (line[i] && !is_wspace(line[i]))
+				{
+					if (!ft_isalnum(line[i]))
+						return(false);
+					i++;
+				}
+			}
+			else
+				return (false);
+		}
+		else
+			i++;
+	}
 	return (true);
 }
