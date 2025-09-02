@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/16 17:23:45 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/02 10:47:53 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ bool	expansion_chekcker(char *line)
 			in_double_quotes = !in_double_quotes;
 			i++;
 		}
-		else if (line[i] == '$' && !in_single_quotes)
+		else if (line[i] == '$' && !in_single_quotes && !in_double_quotes)
 		{
 			i++;
 			if (!line[i])

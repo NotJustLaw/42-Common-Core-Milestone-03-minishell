@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/01 18:27:36 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/02 10:53:52 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ char 	*expand_argument(const char *arg);
 void 	expansion_trade(void);
 void	check_redirs(void);
 bool 	ft_strchr2(const char *s, int c);
+void	*free_split(char **str);
 
 
 #endif

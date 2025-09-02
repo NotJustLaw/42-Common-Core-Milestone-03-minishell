@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 13:16:54 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/01 18:26:29 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/02 10:53:46 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool	we_need_space(char *line)
 	return (true);
 }
 
-/* static void	*free_split(char **str)
+void	*free_split(char **str)
 {
 	size_t	i;
 
@@ -34,7 +34,7 @@ bool	we_need_space(char *line)
 	while (str[i])
 		free(str[i++]);
 	return (free(str), NULL);
-} */
+}
 
 int strncat_realloc(char **dest, const char *source, size_t n)
 {

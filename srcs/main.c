@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/15 17:06:49 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/02 11:45:40 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int main(int ac, char **av)
 		if (!input)
 		{
 			printf("exit\n");
+			free_commands(prog_data()->commands);
 			exit(0);
 		}
 		if (*input)
