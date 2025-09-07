@@ -1,51 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   builtin_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
+/*   Created: 2025/08/23 20:14:46 by justlaw           #+#    #+#             */
 /*   Updated: 2025/09/02 17:29:52 by justlaw          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #include "../minishell.h"
 
-t_shell	*prog_data(void)
+int	unset_filter(char *s)
 {
-	static t_shell	prog_data;
+	int	i;
 
-	return (&prog_data);
-}
+	if (!s || (!ft_isalpha(s[0]) && s[0] != '_'))
+		return (-1);
 
-int main(int ac, char **av, char **envp)
-{
-	char	*input = NULL;
-
-	(void)ac;
-	(void)av;
-	prog_data()->envp = copy_envp(envp);
-	prog_data()->exit_status = 0;
-	prog_data()->is_running = 1;
-	full_sighandler();
-	while (1)
+	i = 1;
+	while (s[i])
 	{
-		input = readline("minishell > ");
-		if (!input)
-		{
-			printf("exit\n");
-			exit(0);
-		}
-		if (*input)
-			add_history(input);
-		free_commands(prog_data()->commands);
-		prog_data()->commands = NULL;
-		parser(input);
-		execute_all(prog_data()->commands, prog_data());
-		free(input);
+		if (!ft_isalnum(s[i]) && s[i] != '_')
+			return (-1);
+		i++;
 	}
-	return(0);
+	return (0);
 }

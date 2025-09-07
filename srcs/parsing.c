@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/07/16 16:07:39 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/06 18:45:33 by justlaw          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,6 @@ t_command *parser(char *line)
 		i++;
 	}
 	expansion_trade();
-	printf("ola\n");
 	t_command *cmd_iter2 = prog_data()->commands;
 	i = 0;
 	while (cmd_iter2 && i <= indexes[1])

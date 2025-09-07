@@ -3,32 +3,48 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+         #
+#    By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 15:27:34 by hcarrasq          #+#    #+#              #
-#    Updated: 2025/08/07 16:12:20 by henrique-re      ###   ########.fr        #
+#    Updated: 2025/09/06 17:01:05 by justlaw          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
-SRCS_FILES = main.c parsing.c commands_utils.c checkers.c signal_handling.c space_utils.c expansions.c redirections.c
-SRCS = $(addprefix $(SRCS_DIR)/, $(SRCS_FILES))
-
+# Directories
 SRCS_DIR = srcs
-
+EXEC_DIR = execution_module
 OBJS_DIR = objs
+LIBFT_DIR = libraries/libft
+PIPEX_DIR = libraries/pipex/src
+PIPEX_SRCS = pipex_bonus.c pipex_utils.c pipex_bonus_utils.c \
+             pipex_utils_extra.c files_handler.c get_next_line_bonus.c \
+             get_next_line_utils_bonus.c pipex_heredoc_utils.c
 
-OBJS	= $(addprefix $(OBJS_DIR)/, $(SRCS_FILES:.c=.o))
+PIPEX_OBJS = $(addprefix $(PIPEX_DIR)/, $(PIPEX_SRCS:.c=.o))
 
-CFLAGS = -g -Wall -Wextra -Werror
+# Source files
+SRCS_FILES = main.c parsing.c commands_utils.c checkers.c signal_handling.c space_utils.c expansions.c redirections.c
+EXEC_FILES = builtin_commands.c builtin_commands_2.c builtin_helper.c env_manager.c env_manager_utils.c execution_builtin.c execution_handler.c execution.c
+
+# Full paths
+SRCS = $(addprefix $(SRCS_DIR)/, $(SRCS_FILES))
+EXEC = $(addprefix $(EXEC_DIR)/, $(EXEC_FILES))
+ALL_SRCS = $(SRCS) $(EXEC)
+OBJS = $(addprefix $(OBJS_DIR)/, $(notdir $(ALL_SRCS:.c=.o)))
+
+# Compiler and flags
 CC = cc
+CFLAGS = -g -Wall -Wextra -Werror
 
-all:	$(NAME)
+# Build targets
+all: $(NAME)
 
-$(NAME): $(OBJS) $(OBJS_DIR)
-	$(MAKE) -C ./libft
-	$(CC) $(CFLAGS) $(OBJS) libft/libft.a -Llibft -lft -lreadline -o $(NAME)
+$(NAME): $(OBJS) $(PIPEX_OBJS)
+	$(MAKE) -C $(LIBFT_DIR)
+	$(MAKE) -C $(PIPEX_DIR)
+	$(CC) $(CFLAGS) $(OBJS) $(PIPEX_OBJS) -L$(LIBFT_DIR) -lft -lreadline -o $(NAME)
 
 $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)
@@ -36,17 +52,22 @@ $(OBJS_DIR):
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJS_DIR)/%.o: $(EXEC_DIR)/%.c | $(OBJS_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
-		@cd libft && make clean
-		@rm -rf $(OBJS)
+	@$(MAKE) -C $(LIBFT_DIR) clean
+	@$(MAKE) -C $(PIPEX_DIR) clean
+	@rm -rf $(OBJS_DIR)
 
-fclean:		clean
-		@cd libft && make fclean
-		@rm -rf $(NAME)
+fclean: clean
+	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@$(MAKE) -C $(PIPEX_DIR) fclean
+	@rm -f $(NAME)
 
-re:		fclean 	all
+re: fclean all
 
 r:
-	make re && clear && ./minishell
+	make re && clear && ./$(NAME)
 
-.PHONY : all clean fclean re
+.PHONY: all clean fclean re r
