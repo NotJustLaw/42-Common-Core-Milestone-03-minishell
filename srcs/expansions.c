@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:50:34 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/01 18:27:24 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/09 17:22:57 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,19 +38,7 @@ char *expand_argument(const char *arg)
 		else if (arg[i] == '$' && !in_single_quotes)
 		{
 			i++;
-			if (arg[i] == '?')
-			{
-				char *status_str = ft_itoa(1);// depois adicionar a funcao de ober o exit status
-				if (!status_str || strncat_realloc(&result, status_str, strlen(status_str)) == -1)
-				{
-					free(status_str);
-					free(result);
-					return NULL;
-				}
-				free(status_str);
-				i++;
-			}
-			else if (arg[i] && (ft_isalpha(arg[i]) || arg[i] == '_'))
+			if (arg[i] && (ft_isalpha(arg[i]) || arg[i] == '_'))
 			{
 				int start = i;
 				while (ft_isalnum(arg[i]) || arg[i] == '_')

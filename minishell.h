@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/02 10:53:52 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/09 17:37:19 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_shell
 	t_command	*commands;
 	int		exit_status;
 	int		is_running;
+	static int	level;
 }	t_shell;
 
 //main
@@ -64,6 +65,7 @@ bool	redirection_checker(char *line);
 bool	expansion_chekcker(char *line);
 void	full_sighandler();
 void	sigint_handler(int sig);
+void 	reset_signals_in_child(void);
 bool	we_need_space(char *line);
 // static void	*free_split(char **str);
 char	*ft_strndup(const char *s1, size_t n);
