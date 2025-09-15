@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/06 18:45:33 by justlaw          ###   ########.fr       */
+/*   Updated: 2025/09/16 00:27:48 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,11 @@ static int parser2(char *line, char *new_line, int l)
 		else if (*line == flag)
 			flag = 0;
 		else if (flag == 0 && is_wspace(*line))
-			*line = '\2';
+		{
+			*new_line++ = '\2';
+			line++;
+			continue;
+		}
 		else if (flag == 0 && *line == '|')
 		{
 			*line = '\3';
@@ -124,12 +128,23 @@ t_command *parser(char *line)
 		int l = 0;
 		while (cmd_iter->args && cmd_iter->args[l])
 		{
-			printf("args on command[%d]:%s\n", i, cmd_iter->args[l]);
+			printf("args on command[%d]:%s\n", l, cmd_iter->args[l]);
 			l++;
 		}
 		printf("\n");
 		cmd_iter = cmd_iter->next;
 		i++;
+	}
+	check_redirs();
+	t_command *c = prog_data()->commands;
+	while (c)
+	{
+		int j = 0;
+		printf("final args: ");
+		while (c->args && c->args[j])
+			printf("[%s] ", c->args[j++]);
+		printf("\n");
+		c = c->next;
 	}
 	expansion_trade();
 	t_command *cmd_iter2 = prog_data()->commands;
@@ -139,7 +154,7 @@ t_command *parser(char *line)
 		int l = 0;
 		while (cmd_iter2->args && cmd_iter2->args[l])
 		{
-			printf("args on command[%d]:%s\n", i, cmd_iter2->args[l]);
+			printf("args on command[%d]:%s\n", l, cmd_iter2->args[l]);
 			l++;
 		}
 		printf("\n");
@@ -147,6 +162,6 @@ t_command *parser(char *line)
 		i++;
 	}
 	free(new_line);
-	//free the double char **;
+	free_double_ptr(cmd_lst);
 	return (NULL);
 }

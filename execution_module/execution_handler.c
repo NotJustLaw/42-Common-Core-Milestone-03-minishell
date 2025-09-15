@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_handler.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:08:47 by skuhlcke          #+#    #+#             */
-/*   Updated: 2025/07/08 15:44:47 by justlaw          ###   ########.fr       */
+/*   Updated: 2025/09/16 01:15:14 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,38 @@
 
 static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_fd[2]);
 
-int	execute_single_command(t_command *cmds, t_shell *shell)
+int execute_single_command(t_command *cmds, t_shell *shell)
 {
-	pid_t	pid;
-	
-	if (builtin_chkr(cmds->args))
-		return execute_builtin(cmds->args, shell);
-	else
-	{
-		pid = fork();
-		if (pid == 0)
-			ft_execve(shell, cmds);
-		else
-			wait(NULL);
-	}
-	return (0);
+    pid_t pid;
+
+    if (builtin_chkr(cmds->args))
+        return (execute_builtin(cmds->args, shell));
+    else
+    {
+        pid = fork();
+        if (pid == 0)
+        {
+            if (cmds->input_fd > 0)
+            {
+                dup2(cmds->input_fd, STDIN_FILENO);
+                close(cmds->input_fd);
+            }
+            if (cmds->output_fd > 0)
+            {
+                dup2(cmds->output_fd, STDOUT_FILENO);
+                close(cmds->output_fd);
+            }
+            printf("Running single command: %s\n", cmds->args[0]);
+            ft_execve(shell, cmds);
+            perror("execve");
+            exit(127);
+        }
+        else
+            wait(NULL);
+    }
+    return (0);
 }
+
 
 int	execute_pipeline(t_command *cmds, t_shell *shell)
 {
@@ -52,7 +68,6 @@ int	execute_pipeline(t_command *cmds, t_shell *shell)
 			close(pipe_fd[1]);
 			if (in_fd != 0)
 				close(in_fd);
-			close(pipe_fd[0]);
 			in_fd = pipe_fd[0];
 			cmds = cmds->next;
 		}
@@ -74,6 +89,14 @@ static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_f
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	close(in_fd);
+	if (cmds->input_fd > 0)
+	{
+		dup2(cmds->input_fd, STDIN_FILENO);
+		close(cmds->input_fd);
+	}
+	else if (in_fd != STDIN_FILENO)
+		dup2(in_fd, STDIN_FILENO);
+	printf("Running command: %s\n", cmds->args[0]);
 	if (builtin_chkr(cmds->args))
 		exit(execute_builtin(cmds->args, shell));
 	else

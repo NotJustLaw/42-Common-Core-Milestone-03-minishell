@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/06 16:27:33 by justlaw          ###   ########.fr       */
+/*   Updated: 2025/09/15 23:38:59 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,23 @@ bool		we_need_space(char *line);
 
 // static void	*free_split(char **str);
 char	*ft_strndup(const char *s1, size_t n);
-void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size); 
 int 	strncat_realloc(char **dest, const char *source, size_t n);
 char 	*expand_argument(const char *arg);
 void 	expansion_trade(void);
 void	check_redirs(void);
+void	free_double_ptr(char **arr);
 
 //Execution -- | Execution module |
 void	ft_execve(t_shell *shell, t_command *cmds);
 void	execute_all(t_command *cmds, t_shell *shell);
 int		execute_single_command(t_command *cmds, t_shell *shell);
 int		execute_pipeline(t_command *cmds, t_shell *shell);
+int		get_heredoc_input(const char *limiter);
+
+//Exec Helpers
+void 	ft_remove_args(t_command *cmd, int start, int count);
+void	collect_all_heredocs(void);
 
 //Builtin
 int		execute_builtin(char **args, t_shell *shell);

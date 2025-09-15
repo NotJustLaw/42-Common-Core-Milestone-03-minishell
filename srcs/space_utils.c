@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   space_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 13:16:54 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/07/16 16:07:53 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/07 17:01:56 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,34 +38,28 @@ bool	we_need_space(char *line)
 
 int strncat_realloc(char **dest, const char *source, size_t n)
 {
-	if (!dest || !source)
-		return (-1);
 	size_t	old_len;
 	size_t	new_len;
-	if (!*dest)
-		old_len = 0;
-	else
-		old_len = ft_strlen(*dest);
-	new_len = old_len + n;
 	char	*new_str;
 
+	if (!dest || !source)
+		return (-1);
+	old_len = *dest ? ft_strlen(*dest) : 0;
+	new_len = old_len + n;
 	new_str = ft_realloc(*dest, old_len + 1, new_len + 1);
 	if (!new_str)
 		return (-1);
-	ft_memcpy(new_str + old_len, source, new_len);
+	ft_memcpy(new_str + old_len, source, n);
 	new_str[new_len] = '\0';
-	
 	*dest = new_str;
 	return (0);
 }
 
 void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 {
-	size_t	copy_size;
 	void	*new_ptr;
+	size_t	copy_size;
 
-	new_ptr = NULL;
-	copy_size = 0;
 	if (new_size == 0)
 	{
 		free(ptr);
@@ -76,10 +70,7 @@ void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 	new_ptr = malloc(new_size);
 	if (!new_ptr)
 		return (NULL);
-	if (new_size < old_size)
-		copy_size = old_size;
-	else
-		copy_size = new_size;
+	copy_size = old_size < new_size ? old_size : new_size;
 	ft_memcpy(new_ptr, ptr, copy_size);
 	free(ptr);
 	return (new_ptr);

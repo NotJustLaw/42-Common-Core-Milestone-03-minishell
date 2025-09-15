@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_manager.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 16:56:38 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/06 16:30:41 by justlaw          ###   ########.fr       */
+/*   Updated: 2025/09/15 14:44:01 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,22 +102,25 @@ int	set_env_var(char ***env, const char *key, const char *value)
 int	unset_env_var(char ***env, const char *key)
 {
 	int	i;
+	int	j;
 	int	key_len;
 
-	if (!env || !key)
+	if (!env || !*env || !key)
 		return (1);
 	i = -1;
 	key_len = ft_strlen(key);
 	while ((*env)[++i])
 	{
-		if (ft_strncmp(*env[i], key, key_len) == 0 && (*env)[i][key_len] == '=')
+		if (ft_strncmp((*env)[i], key, key_len) == 0 && (*env)[i][key_len] == '=')
 		{
 			free((*env)[i]);
-			while ((*env)[i])
+			j = i;
+			while ((*env)[j + 1])
 			{
-				(*env)[i] = (*env)[i + 1];
-				i++;
+				(*env)[j] = (*env)[j + 1];
+				j++;
 			}
+			(*env)[j] = NULL;
 			return (0);
 		}
 	}

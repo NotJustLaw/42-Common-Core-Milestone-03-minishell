@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 15:22:14 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/08/07 16:17:49 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/09/15 23:28:43 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,51 +25,58 @@ static void	append_function(t_command *cmd, int arg_idx, int append)
 	}
 }
 
-static void	here_dock_function(t_command *cmd, int arg_idx, int heredoc)
+// static void	here_dock_function(t_command *cmd, int arg_idx, int heredoc)
+// {
+//     if (cmd->args[arg_idx + 1])
+//     {
+//         if (heredoc)
+//         {
+//             cmd->delimiter = ft_strdup(cmd->args[arg_idx + 1]);
+//             cmd->heredoc = 1;
+//         }
+//         else
+//         {
+//             cmd->infile = ft_strdup(cmd->args[arg_idx + 1]);
+//             cmd->heredoc = 0;
+//         }
+//     }
+// }
+void check_redirs(void)
 {
-	if (heredoc)
-	{
-		if (cmd->args[arg_idx + 1])
-		{
-			cmd->delimiter = ft_strdup(cmd->args[arg_idx + 1]);
-			cmd->heredoc = 1;
-		}
-		else
-		{
-			if (cmd->args[arg_idx + 1])
-			{
-				cmd->infile = ft_strdup(cmd->args[arg_idx + 1]);
-				cmd->heredoc = 0;
-			}
-		}
-	}
-}
-void	check_redirs(void)
-{
-	int			indexes[2];
-	bool		quoted;
-	t_command	*cmd;
-
+	t_command *cmd;
+	
 	cmd = prog_data()->commands;
-	quoted = false;
-	indexes[0] = 0;
-	indexes[1] = 0;
-	while (prog_data()->commands->args[indexes[0]])
+	while (cmd)
 	{
-		if (prog_data()->commands->args[indexes[0]][0] == '\"' || prog_data()->commands->args[indexes[0]][0] == '\'')
-			quoted = true;
-		while (cmd->args[indexes[0]][indexes[1]] && quoted == false)
+		int i = 0;
+
+		while (cmd->args && cmd->args[i])
 		{
-			if (ft_strncmp(cmd->args[indexes[0]], ">", 1))
-				append_function(cmd, indexes[0], indexes[1]);
-			else if (ft_strncmp(cmd->args[indexes[0]], ">>", 2))
-				append_function(cmd, indexes[0], indexes[1]);
-			else if (ft_strncmp(cmd->args[indexes[0]], "<", 1))
-				here_dock_function(cmd, indexes[0], indexes[1]);
-			else if (ft_strncmp(cmd->args[indexes[0]], "<<", 2))
-				here_dock_function(cmd, indexes[0], indexes[1]);
-			indexes[1]++;
+			if (ft_strncmp(cmd->args[i], ">>", 2) == 0)
+				append_function(cmd, i, 1);
+			else if (ft_strncmp(cmd->args[i], ">", 1) == 0)
+				append_function(cmd, i, 0);
+			else if (ft_strncmp(cmd->args[i], "<<", 2) == 0)
+			{
+				if (cmd->args[i + 1])
+				{
+					cmd->delimiter = ft_strdup(cmd->args[i + 1]);
+					cmd->heredoc = 1;
+					printf("HEREDOC DETECTED: delimiter=%s\n", cmd->delimiter);
+				}
+				ft_remove_args(cmd, i, 2);
+				i--;
+			}
+			else if (ft_strncmp(cmd->args[i], "<", 1) == 0)
+			{
+				if (cmd->args[i + 1])
+					cmd->infile = ft_strdup(cmd->args[i + 1]);
+				ft_remove_args(cmd, i, 2);
+				i--;
+			}
+			i++;
 		}
-		indexes[0]++;
+		cmd = cmd->next;
 	}
 }
+

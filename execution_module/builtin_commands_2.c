@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_commands_2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:07:09 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/06 16:28:47 by justlaw          ###   ########.fr       */
+/*   Updated: 2025/09/07 16:51:25 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	builtin_env(char **args, t_shell *shell)
 	while (shell->envp[i])
 	{
 		if (ft_strchr(shell->envp[i], '=') != NULL)
-			ft_putstr(shell->envp[i]);
+			ft_putendl_fd(shell->envp[i], STDOUT_FILENO);
 		i++;
 	}
 	return (0);

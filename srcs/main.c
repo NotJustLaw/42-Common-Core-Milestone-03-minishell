@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/02 17:29:52 by justlaw          ###   ########.fr       */
+/*   Updated: 2025/09/16 01:06:16 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../minishell.h"
 
@@ -44,6 +42,7 @@ int main(int ac, char **av, char **envp)
 		free_commands(prog_data()->commands);
 		prog_data()->commands = NULL;
 		parser(input);
+		collect_all_heredocs();
 		execute_all(prog_data()->commands, prog_data());
 		free(input);
 	}

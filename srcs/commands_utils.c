@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 10:19:03 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/06/19 18:02:01 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/07 17:06:20 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,3 +59,15 @@ void	free_commands(t_command *commands)
 		
 	}
 }
+
+void	free_double_ptr(char **arr)
+{
+	int	i = 0;
+
+	if (!arr)
+		return;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+}
+
