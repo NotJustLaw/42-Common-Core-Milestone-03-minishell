@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/02 10:47:53 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/20 18:15:41 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,51 +69,44 @@ bool	redirection_checker(char *line)
 	return (true);
 }
 
-bool	expansion_chekcker(char *line)
+bool expansion_chekcker(const char *line)
 {
-	int	i;
-	bool	in_single_quotes;
-	bool	in_double_quotes;
-	
-	in_single_quotes = false;
-	in_double_quotes = false;
+    bool in_squote;
+    bool in_dquote;
+    size_t i;
+
+	in_squote = false;
+	in_dquote = false;
 	i = 0;
-	while (line[i])
-	{
-		if (line[i] == '\'' && !in_double_quotes)
+    while (line[i]) {
+        if (line[i] == '\'' && !in_dquote)
 		{
-			in_single_quotes = !in_single_quotes;
-			i++;
-		}
-		else if (line[i] == '\"' && !in_single_quotes)
+            in_squote = !in_squote;
+            i++;
+        } else if (line[i] == '"' && !in_squote)
 		{
-			in_double_quotes = !in_double_quotes;
-			i++;
-		}
-		else if (line[i] == '$' && !in_single_quotes && !in_double_quotes)
+            in_dquote = !in_dquote;
+            i++;
+        } 
+		else if (line[i] == '$' && !in_squote) 
 		{
-			i++;
-			if (!line[i])
-				return (false);
-			if (ft_isalpha(line[i]) || (line[i] == '_' || line[i] == '?'))
+            i++;
+            if (!line[i]) 
+				return false;
+            if (line[i] == '?') 
 			{
-				if (line[i] == '?')
-				{
-					i++;
-					continue;
-				}
-				while (line[i] && !is_wspace(line[i]))
-				{
-					if (!ft_isalnum(line[i]))
-						return(false);
-					i++;
-				}
-			}
-			else
-				return (false);
-		}
+                i++;
+                continue;
+            }
+
+            if (!(isalpha((unsigned char)line[i]) || line[i] == '_'))
+                return false;
+            i++;
+            while (line[i] && (isalnum((unsigned char)line[i]) || line[i] == '_'))
+                i++;
+        }
 		else
-			i++;
-	}
-	return (true);
+            i++;
+    }
+    return true;
 }
