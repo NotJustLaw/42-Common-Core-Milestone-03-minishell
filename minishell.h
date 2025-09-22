@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/15 23:38:59 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/22 13:45:20 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define MINISHELL_H
 
 # include "libraries/libft/libft.h"
-# include "libraries/pipex/src/pipex.h"
+# include "libraries/pipex1/src/pipex.h"
 # include "execution_module/env_manager.h"
 # include <stddef.h>
 # include <pthread.h>
@@ -89,6 +89,7 @@ int		get_heredoc_input(const char *limiter);
 //Exec Helpers
 void 	ft_remove_args(t_command *cmd, int start, int count);
 void	collect_all_heredocs(void);
+void	print_sorted_env(char **envp);
 
 //Builtin
 int		execute_builtin(char **args, t_shell *shell);

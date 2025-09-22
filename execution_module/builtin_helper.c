@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 20:14:46 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/15 14:30:21 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/22 13:49:17 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,4 +26,49 @@ int	unset_filter(char *s)
 		i++;
 	}
 	return (0);
+}
+
+static void sort_env(char **env)
+{
+	int i, j;
+	char *tmp;
+
+	for (i = 0; env[i]; i++)
+	{
+		for (j = 0; env[j + 1]; j++)
+		{
+			if (ft_strncmp(env[j], env[j + 1], SIZE_MAX) > 0)
+			{
+				tmp = env[j];
+				env[j] = env[j + 1];
+				env[j + 1] = tmp;
+			}
+		}
+	}
+}
+
+void	print_sorted_env(char **envp)
+{
+	char	**copy;
+	char	*eq;
+	int		i;
+	
+	copy = copy_envp(envp);
+	sort_env(copy);
+	i = -1;
+	while (copy[++i])
+	{
+		eq = ft_strchr(copy[i], '=');
+		if (eq)
+		{
+			*eq = '\0';
+			printf("declare -x %s=\"%s\"\n", copy[i], eq + 1);
+			*eq = '=';
+		}
+		else
+		{
+			printf("declare -x %s\n", copy[i]);
+		}
+	}
+	free_double_ptr(copy);
 }

@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/16 00:27:48 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/22 13:50:29 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,7 @@ t_command *parser(char *line)
 	indexes[1] = parser2(line, new_line, 0);
 	if (indexes[1] < 0)
 		return (NULL);
-	printf("before splitting:%s\n\n", new_line);
 	cmd_lst = ft_split(new_line, '\3');
-	while (cmd_lst[indexes[0]])
-	{
-		printf("after splitting:%s\n\n", cmd_lst[indexes[0]]);
-		indexes[0]++;
-	}
 	printf("\n\n");
 	indexes[0] = 0;
 	while (cmd_lst[indexes[0]])

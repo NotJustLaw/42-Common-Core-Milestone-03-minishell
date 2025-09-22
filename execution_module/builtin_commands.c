@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_commands.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:05:51 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/16 16:21:48 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/22 13:24:27 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ int	builtin_export(char **args, t_shell *shell)
 	char	*value;
 
 	i = 0;
+	if (!args[1])
+		return (print_sorted_env(shell->envp), 0);
 	while (args[++i])
 	{
 		equal = ft_strchr(args[i], '=');

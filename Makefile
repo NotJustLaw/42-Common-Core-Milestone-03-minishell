@@ -6,7 +6,7 @@
 #    By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 15:27:34 by hcarrasq          #+#    #+#              #
-#    Updated: 2025/09/15 14:59:15 by notjustlaw       ###   ########.fr        #
+#    Updated: 2025/09/22 13:10:27 by notjustlaw       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ SRCS_DIR = srcs
 EXEC_DIR = execution_module
 OBJS_DIR = objs
 LIBFT_DIR = libraries/libft
-PIPEX_DIR = libraries/pipex/src
+PIPEX_DIR = libraries/pipex1/src
 PIPEX_SRCS = pipex_bonus.c pipex_utils.c pipex_bonus_utils.c \
              pipex_utils_extra.c files_handler.c get_next_line_bonus.c \
              get_next_line_utils_bonus.c pipex_heredoc_utils.c
