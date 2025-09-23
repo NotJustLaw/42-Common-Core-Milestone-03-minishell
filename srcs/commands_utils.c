@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 10:19:03 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/07 17:06:20 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/23 21:51:06 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,30 +33,24 @@ void	append_commands(t_command *new_node)
 
 void	free_commands(t_command *commands)
 {
-	t_command	*current;
-	t_command	*next;
-	int			i;
+	t_command *current;
+	t_command *next;
 
-	if (!commands)
-		return ;
-	i = 0;
 	current = commands;
-	next = NULL;
 	while (current)
 	{
 		next = current->next;
 		if (current->args)
 		{
-			while (current->args[i])
-			{
+			for (int i = 0; current->args[i]; i++)
 				free(current->args[i]);
-				i++;
-			}
 			free(current->args);
 		}
+		free(current->infile);
+		free(current->outfile);
+		free(current->delimiter);
 		free(current);
 		current = next;
-		
 	}
 }
 

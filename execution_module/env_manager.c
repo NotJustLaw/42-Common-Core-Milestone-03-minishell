@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 16:56:38 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/15 14:44:01 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/23 13:59:04 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*get_env_value(char **env, const char *key)
 	i = -1;
 	while (env[++i])
 	{
-		if (ft_strncmp(env[i], key, 3) == 0 && env[i][key_len] == '=')
+		if (ft_strncmp(env[i], key, key_len) == 0 && env[i][key_len] == '=')
 			return (&env[i][key_len + 1]);
 	}
 	return (NULL);

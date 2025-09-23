@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:08:47 by skuhlcke          #+#    #+#             */
-/*   Updated: 2025/09/22 14:17:41 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/23 22:01:01 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,36 +16,30 @@ static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_f
 
 int execute_single_command(t_command *cmds, t_shell *shell)
 {
-    pid_t pid;
+	pid_t pid;
 
-    if (builtin_chkr(cmds->args))
-        return (execute_builtin(cmds->args, shell));
-    else
-    {
-        pid = fork();
-        if (pid == 0)
-        {
-            if (cmds->input_fd > 0)
-            {
-                dup2(cmds->input_fd, STDIN_FILENO);
-                close(cmds->input_fd);
-            }
-            if (cmds->output_fd > 0)
-            {
-                dup2(cmds->output_fd, STDOUT_FILENO);
-                close(cmds->output_fd);
-            }
-            printf("Running single command: %s\n", cmds->args[0]);
-            ft_execve(shell, cmds);
-            perror("execve");
-            exit(127);
-        }
-        else
-            wait(NULL);
-    }
-    return (0);
+	if (builtin_chkr(cmds->args) && cmds->input_fd <= 0 && cmds->output_fd <= 0)
+		return (execute_builtin(cmds->args, shell));
+	if (!cmds->args || !cmds->args[0] || cmds->args[0][0] == '\0')
+	{
+		shell->exit_status = 127;
+		return (0);
+	}
+	pid = fork();
+	if (pid == 0)
+	{
+		apply_redirections(cmds);
+		if (builtin_chkr(cmds->args))
+			exit(execute_builtin(cmds->args, shell));
+		else
+			ft_execve(shell, cmds);
+		perror("execve");
+		exit(127);
+	}
+	else
+		wait(NULL);
+	return (0);
 }
-
 
 int	execute_pipeline(t_command *cmds, t_shell *shell)
 {
@@ -60,6 +54,11 @@ int	execute_pipeline(t_command *cmds, t_shell *shell)
 	{
 		if (pipe_generator(pipe_fd))
 			return (perror("pipe"), -1);
+		if (!cmds->args || !cmds->args[0] || cmds->args[0][0] == '\0')
+		{
+			shell->exit_status = 127;
+			return (0);
+		}
 		pid = fork();
 		if (pid == 0)
 			execute_child(cmds, shell, in_fd, pipe_fd);
@@ -83,22 +82,13 @@ int	execute_pipeline(t_command *cmds, t_shell *shell)
 
 static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_fd[2])
 {
-	if (cmds->input_fd > 0)
-	{
-		dup2(cmds->input_fd, STDIN_FILENO);
-		close(cmds->input_fd);
-	}
-	else if (in_fd != STDIN_FILENO)
-	{
-		dup2(in_fd, STDIN_FILENO);
-	}
-	if (cmds->next)
+	dup2(in_fd, STDIN_FILENO);
+	apply_redirections(cmds);
+	if (cmds->next && cmds->output_fd <= 0)
 		dup2(pipe_fd[1], STDOUT_FILENO);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
-	if (in_fd != STDIN_FILENO)
-		close(in_fd);
-	printf("Running command: %s\n", cmds->args[0]);
+	close(in_fd);
 	if (builtin_chkr(cmds->args))
 		exit(execute_builtin(cmds->args, shell));
 	else
@@ -106,4 +96,3 @@ static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_f
 	perror("execve");
 	exit(127);
 }
-

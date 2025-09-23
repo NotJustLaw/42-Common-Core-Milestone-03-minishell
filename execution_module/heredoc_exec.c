@@ -6,13 +6,13 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:52:02 by notjustlaw        #+#    #+#             */
-/*   Updated: 2025/09/16 01:05:57 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/23 21:22:32 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int get_heredoc_input(const char *limiter)
+int get_heredoc_input(const char *limiter, t_command *cmd)
 {
 	int		here_pipe[2];
 	char	*line;
@@ -30,6 +30,12 @@ int get_heredoc_input(const char *limiter)
 			free(line);
 			break ;
 		}
+		if (cmd->heredoc_expand)
+		{
+			char *orig = line;
+			line = expand_argument(orig);
+			free(orig);
+		}
 		write(here_pipe[1], line, ft_strlen(line));
 		write(here_pipe[1], "\n", 1);
 		free(line);
@@ -38,17 +44,26 @@ int get_heredoc_input(const char *limiter)
 	return (here_pipe[0]);
 }
 
-void ft_remove_args(t_command *cmd, int start, int count)
+void	ft_remove_args(t_command *cmd, int start, int count)
 {
-	int i = start;
-	while (cmd->args[i + count])
+	int j = 0;
+	int k = 0;
+
+	for (j = 0; j < count; j++)
 	{
-		cmd->args[i] = cmd->args[i + count];
-		i++;
+		if (cmd->args[start + j])
+		{
+			free(cmd->args[start + j]);
+			cmd->args[start + j] = NULL;
+		}
 	}
-	while (cmd->args[i])
-		cmd->args[i++] = NULL;
+	j = start + count;
+	k = start;
+	while (cmd->args[j])
+		cmd->args[k++] = cmd->args[j++];
+	cmd->args[k] = NULL;
 }
+
 
 void	collect_all_heredocs(void)
 {
@@ -61,7 +76,7 @@ void	collect_all_heredocs(void)
 	{
 		if (cmd->heredoc && cmd->delimiter)
 		{
-			fd = get_heredoc_input(cmd->delimiter);
+			fd = get_heredoc_input(cmd->delimiter, cmd);
 			if (fd == -1)
 			{
 				perror("heredoc");

@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 13:16:54 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/07 17:01:56 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/23 22:26:22 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool	we_need_space(char *line)
 	if (!redirection_checker(line))
 		return (false);
 	printf("about to check expansions\n");
-	if (!expansion_chekcker(line))
+	if (!expansion_checker(line))
 		return (false);
 	return (true);
 }

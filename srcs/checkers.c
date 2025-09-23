@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checkers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/16 16:23:22 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/23 22:25:18 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,51 +70,45 @@ bool	redirection_checker(char *line)
 	return (true);
 }
 
-bool	expansion_chekcker(char *line)
+bool expansion_checker(char *line)
 {
-	int	i;
-	bool	in_single_quotes;
-	bool	in_double_quotes;
-	
-	in_single_quotes = false;
-	in_double_quotes = false;
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == '\'' && !in_double_quotes)
-		{
-			in_single_quotes = !in_single_quotes;
-			i++;
-		}
-		else if (line[i] == '\"' && !in_single_quotes)
-		{
-			in_double_quotes = !in_double_quotes;
-			i++;
-		}
-		else if (line[i] == '$' && !in_single_quotes)
-		{
-			i++;
-			if (!line[i])
-				return (false);
-			if (ft_isalpha(line[i]) || (line[i] == '_' || line[i] == '?'))
-			{
-				if (line[i] == '?')
-				{
-					i++;
-					continue;
-				}
-				while (line[i] && !is_wspace(line[i]))
-				{
-					if (!ft_isalnum(line[i]))
-						return(false);
-					i++;
-				}
-			}
-			else
-				return (false);
-		}
-		else
-			i++;
-	}
-	return (true);
+    int  i = 0;
+    bool in_single_quotes = false;
+    bool in_double_quotes = false;
+
+    while (line[i])
+    {
+        if (line[i] == '\'' && !in_double_quotes)
+        {
+            in_single_quotes = !in_single_quotes;
+            i++;
+        }
+        else if (line[i] == '"' && !in_single_quotes)
+        {
+            in_double_quotes = !in_double_quotes;
+            i++;
+        }
+        else if (line[i] == '$' && !in_single_quotes)
+        {
+            i++; // skip $
+
+            if (!line[i]) // lone $ at end is allowed
+                return true;
+
+            if (line[i] == '?') // $?
+                i++;
+            else if (ft_isalpha(line[i]) || line[i] == '_')
+            {
+                while (line[i] && (ft_isalnum(line[i]) || line[i] == '_'))
+                    i++;
+            }
+            else
+                i++; // invalid variable name, skip
+        }
+        else
+            i++;
+    }
+    return true;
 }
+
+

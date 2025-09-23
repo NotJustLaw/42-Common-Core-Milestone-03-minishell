@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/22 13:45:20 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/23 22:26:04 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,13 @@
 # include <stdarg.h>
 # include <fcntl.h>
 # include <stdbool.h>
+# include <signal.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <aio.h>
 # include <stddef.h>	
 # include <sys/time.h>
-# include <signal.h>
+# include <sys/stat.h>
 
 typedef struct s_command
 {
@@ -46,6 +47,7 @@ typedef struct s_command
 	char				*outfile;
 	int					append;
 	int					heredoc;
+	int					heredoc_expand;
 	char				*delimiter;
 }	t_command;
 
@@ -65,7 +67,7 @@ void		append_commands(t_command *new_node);
 void		free_commands(t_command *commands);
 bool		pipe_checker(char *line);
 bool		redirection_checker(char *line);
-bool		expansion_chekcker(char *line);
+bool		expansion_checker(char *line);
 void		full_sighandler();
 void		sigint_handler(int sig);
 bool		we_need_space(char *line);
@@ -84,12 +86,13 @@ void	ft_execve(t_shell *shell, t_command *cmds);
 void	execute_all(t_command *cmds, t_shell *shell);
 int		execute_single_command(t_command *cmds, t_shell *shell);
 int		execute_pipeline(t_command *cmds, t_shell *shell);
-int		get_heredoc_input(const char *limiter);
+int		get_heredoc_input(const char *limiter, t_command *cmd);
 
 //Exec Helpers
 void 	ft_remove_args(t_command *cmd, int start, int count);
 void	collect_all_heredocs(void);
 void	print_sorted_env(char **envp);
+void	apply_redirections(t_command *cmd);
 
 //Builtin
 int		execute_builtin(char **args, t_shell *shell);
