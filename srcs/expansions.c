@@ -3,16 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   expansions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:50:34 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/09 17:22:57 by marvin           ###   ########.fr       */
+/*   Updated: 2025/09/24 10:39:28 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 extern int get_exit_status(void);
+
+char *expand_heredoc(const char *line)
+{
+	char *result;
+	int i;
+	int var_len;
+	char *var_name;
+	char *value;
+
+	result = NULL;
+	i = 0;
+	var_len = 0;
+	var_name = NULL;
+	value = NULL;
+	while (line[i]) 
+	{
+		if (line[i] == '$' && line[i+1] && (ft_isalpha(line[i+1]) || line[i+1] == '_'))
+		{
+			i++;
+			int start = i;
+			while (ft_isalnum(line[i]) || line[i] == '_')
+				i++;
+			var_len = i - start;
+			var_name = ft_strndup(&line[start], var_len);
+			value = getenv(var_name);
+			free(var_name);
+			if (value)
+				strncat_realloc(&result, value, strlen(value));
+		} 
+		else 
+		{
+			strncat_realloc(&result, &line[i], 1);
+			i++;
+		}
+	}
+	return result;
+}
 
 char *expand_argument(const char *arg)
 {
@@ -74,7 +111,7 @@ char *expand_argument(const char *arg)
 			i++;
 		}
 	}
-	return result;
+	return (result);
 }
 
 void expansion_trade(void)
