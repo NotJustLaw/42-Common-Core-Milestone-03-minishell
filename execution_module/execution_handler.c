@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_handler.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:08:47 by skuhlcke          #+#    #+#             */
-/*   Updated: 2025/09/23 22:01:01 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/24 18:58:41 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ int execute_single_command(t_command *cmds, t_shell *shell)
 		exit(127);
 	}
 	else
-		wait(NULL);
+		waitpid(pid, &prog_data()->exit_status, 0);
+	prog_data()->exit_status = prog_data()->exit_status / 256;
 	return (0);
 }
 

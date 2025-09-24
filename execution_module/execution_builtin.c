@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_builtin.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: justlaw <justlaw@student.42.fr>            +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:04:34 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/06 16:31:20 by justlaw          ###   ########.fr       */
+/*   Updated: 2025/09/24 18:59:10 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int	execute_builtin(char **args, t_shell *shell)
 		return (builtin_env(args, shell));
 	else if (ft_strncmp(args[0], "exit", 5) == 0)
 		return (builtin_exit(args, shell));
+	prog_data()->exit_status = 0;
 	return (0);
 }
 
