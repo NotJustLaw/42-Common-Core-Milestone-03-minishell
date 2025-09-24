@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 15:22:14 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/08/07 16:17:49 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/09/24 14:43:51 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,57 +19,98 @@ static void	append_function(t_command *cmd, int arg_idx, int append)
 		cmd->outfile = ft_strdup(cmd->args[arg_idx + 1]);
 		cmd->append = append;
 		if (cmd->append)
-			cmd->output_fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			cmd->output_fd = open(cmd->outfile,
+					O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else
-			cmd->output_fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			cmd->output_fd = open(cmd->outfile,
+					O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (cmd->output_fd < 0)
+			perror(cmd->outfile);
 	}
 }
 
-static void	here_dock_function(t_command *cmd, int arg_idx, int heredoc)
+static char *strip_quotes_and_get_delimiter(const char *raw_delim, int *expand)
 {
-	if (heredoc)
+	char	*new_str;
+	int		i;
+	int		j;
+	char	quote_char;
+	int		has_quotes;
+
+	new_str = malloc(ft_strlen(raw_delim) + 1);
+	if (!new_str)
+		return (NULL);
+	i = 0;
+	j = 0;
+	has_quotes = 0;
+	while (raw_delim[i])
 	{
-		if (cmd->args[arg_idx + 1])
+		if (raw_delim[i] == '\'' || raw_delim[i] == '"')
 		{
-			cmd->delimiter = ft_strdup(cmd->args[arg_idx + 1]);
-			cmd->heredoc = 1;
+			has_quotes = 1;
+			quote_char = raw_delim[i];
+			i++;
+			while (raw_delim[i] && raw_delim[i] != quote_char)
+				new_str[j++] = raw_delim[i++];
+			if (raw_delim[i] == quote_char)
+				i++;
 		}
 		else
+			new_str[j++] = raw_delim[i++];
+	}
+	new_str[j] = '\0';
+	*expand = !has_quotes;
+	return (new_str);
+}
+
+void check_redirs(void)
+{
+	t_command *cmd = prog_data()->commands;
+
+	while (cmd)
+	{
+		for (int i = 0; cmd->args && cmd->args[i]; i++)
 		{
-			if (cmd->args[arg_idx + 1])
+			if (ft_strncmp(cmd->args[i], ">>", 2) == 0)
 			{
-				cmd->infile = ft_strdup(cmd->args[arg_idx + 1]);
-				cmd->heredoc = 0;
+				append_function(cmd, i, 1);
+				ft_remove_args(cmd, i, 2);
+				i--;
+			}
+			else if (ft_strncmp(cmd->args[i], ">", 1) == 0)
+			{
+				append_function(cmd, i, 0);
+				ft_remove_args(cmd, i, 2);
+				i--;
+			}
+			else if (ft_strncmp(cmd->args[i], "<<", 2) == 0)
+			{
+				if (cmd->args[i + 1])
+				{
+					char *raw_delim = cmd->args[i + 1];
+					cmd->heredoc = 1;
+					cmd->delimiter = strip_quotes_and_get_delimiter(raw_delim, &cmd->heredoc_expand);
+				}
+				ft_remove_args(cmd, i, 2);
+				i--;
+			}
+			else if (ft_strncmp(cmd->args[i], "<", 1) == 0)
+			{
+				if (cmd->args[i + 1])
+				{
+					cmd->infile = ft_strdup(cmd->args[i + 1]);
+					cmd->input_fd = open(cmd->infile, O_RDONLY);
+					if (cmd->input_fd < 0)
+					{
+						perror(cmd->infile);
+						prog_data()->exit_status = 1;
+						cmd->input_fd = -1;
+					}
+				}
+				ft_remove_args(cmd, i, 2);
+				i--;
 			}
 		}
-	}
-}
-void	check_redirs(void)
-{
-	int			indexes[2];
-	bool		quoted;
-	t_command	*cmd;
-
-	cmd = prog_data()->commands;
-	quoted = false;
-	indexes[0] = 0;
-	indexes[1] = 0;
-	while (prog_data()->commands->args[indexes[0]])
-	{
-		if (prog_data()->commands->args[indexes[0]][0] == '\"' || prog_data()->commands->args[indexes[0]][0] == '\'')
-			quoted = true;
-		while (cmd->args[indexes[0]][indexes[1]] && quoted == false)
-		{
-			if (ft_strncmp(cmd->args[indexes[0]], ">", 1))
-				append_function(cmd, indexes[0], indexes[1]);
-			else if (ft_strncmp(cmd->args[indexes[0]], ">>", 2))
-				append_function(cmd, indexes[0], indexes[1]);
-			else if (ft_strncmp(cmd->args[indexes[0]], "<", 1))
-				here_dock_function(cmd, indexes[0], indexes[1]);
-			else if (ft_strncmp(cmd->args[indexes[0]], "<<", 2))
-				here_dock_function(cmd, indexes[0], indexes[1]);
-			indexes[1]++;
-		}
-		indexes[0]++;
+		cmd = cmd->next;
 	}
 }

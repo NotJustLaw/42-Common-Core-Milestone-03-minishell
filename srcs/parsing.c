@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/02 10:54:00 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:10:51 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,11 @@ static int parser2(char *line, char *new_line, int l)
 		else if (*line == flag)
 			flag = 0;
 		else if (flag == 0 && is_wspace(*line))
-			*line = '\2';
+		{
+			*new_line++ = '\2';
+			line++;
+			continue;
+		}
 		else if (flag == 0 && *line == '|')
 		{
 			*line = '\3';
@@ -99,13 +103,7 @@ t_command *parser(char *line)
 	indexes[1] = parser2(line, new_line, 0);
 	if (indexes[1] < 0)
 		return (NULL);
-	printf("before splitting:%s\n\n", new_line);
 	cmd_lst = ft_split(new_line, '\3');
-	while (cmd_lst[indexes[0]])
-	{
-		printf("after splitting:%s\n\n", cmd_lst[indexes[0]]);
-		indexes[0]++;
-	}
 	printf("\n\n");
 	indexes[0] = 0;
 	while (cmd_lst[indexes[0]])
@@ -125,15 +123,25 @@ t_command *parser(char *line)
 		int l = 0;
 		while (cmd_iter->args && cmd_iter->args[l])
 		{
-			printf("args on command[%d]:%s\n", i, cmd_iter->args[l]);
+			printf("args on command[%d]:%s\n", l, cmd_iter->args[l]);
 			l++;
 		}
 		printf("\n");
 		cmd_iter = cmd_iter->next;
 		i++;
 	}
+	check_redirs();
+	t_command *c = prog_data()->commands;
+	while (c)
+	{
+		int j = 0;
+		printf("final args: ");
+		while (c->args && c->args[j])
+			printf("[%s] ", c->args[j++]);
+		printf("\n");
+		c = c->next;
+	}
 	expansion_trade();
-	printf("ola\n");
 	t_command *cmd_iter2 = prog_data()->commands;
 	i = 0;
 	while (cmd_iter2 && i <= indexes[1])
@@ -141,7 +149,7 @@ t_command *parser(char *line)
 		int l = 0;
 		while (cmd_iter2->args && cmd_iter2->args[l])
 		{
-			printf("args on command[%d]:%s\n", i, cmd_iter2->args[l]);
+			printf("args on command[%d]:%s\n", l, cmd_iter2->args[l]);
 			l++;
 		}
 		printf("\n");
@@ -149,6 +157,6 @@ t_command *parser(char *line)
 		i++;
 	}
 	free(new_line);
-	//free the double char **;
+	free_double_ptr(cmd_lst);
 	return (NULL);
 }

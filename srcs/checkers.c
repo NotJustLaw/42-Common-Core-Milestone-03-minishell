@@ -6,13 +6,14 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/20 18:15:41 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:08:16 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../minishell.h"
 
-bool    pipe_checker(char *line)
+bool	pipe_checker(char *line)
 {
 	int i;
 	int found_pipes;
@@ -69,44 +70,44 @@ bool	redirection_checker(char *line)
 	return (true);
 }
 
-bool expansion_chekcker(const char *line)
+bool expansion_checker(char *line)
 {
-    bool in_squote;
-    bool in_dquote;
-    size_t i;
+    int  i = 0;
+    bool in_single_quotes = false;
+    bool in_double_quotes = false;
 
-	in_squote = false;
-	in_dquote = false;
-	i = 0;
-    while (line[i]) {
-        if (line[i] == '\'' && !in_dquote)
-		{
-            in_squote = !in_squote;
+    while (line[i])
+    {
+        if (line[i] == '\'' && !in_double_quotes)
+        {
+            in_single_quotes = !in_single_quotes;
             i++;
-        } else if (line[i] == '"' && !in_squote)
-		{
-            in_dquote = !in_dquote;
-            i++;
-        } 
-		else if (line[i] == '$' && !in_squote) 
-		{
-            i++;
-            if (!line[i]) 
-				return false;
-            if (line[i] == '?') 
-			{
-                i++;
-                continue;
-            }
-
-            if (!(isalpha((unsigned char)line[i]) || line[i] == '_'))
-                return false;
-            i++;
-            while (line[i] && (isalnum((unsigned char)line[i]) || line[i] == '_'))
-                i++;
         }
-		else
+        else if (line[i] == '"' && !in_single_quotes)
+        {
+            in_double_quotes = !in_double_quotes;
+            i++;
+        }
+        else if (line[i] == '$' && !in_single_quotes)
+        {
+            i++; // skip $
+
+            if (!line[i]) // lone $ at end is allowed
+                return true;
+
+            if (line[i] == '?') // $?
+                i++;
+            else if (ft_isalpha(line[i]) || line[i] == '_')
+            {
+                while (line[i] && (ft_isalnum(line[i]) || line[i] == '_'))
+                    i++;
+            }
+            else
+                i++; // invalid variable name, skip
+        }
+        else
             i++;
     }
     return true;
 }
+

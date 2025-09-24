@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/09 17:38:38 by marvin           ###   ########.fr       */
+/*   Updated: 2025/09/24 19:10:47 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../minishell.h"
 
@@ -28,12 +26,15 @@ t_shell	*prog_data(void)
 	return (&prog_data);
 }
 
-int main(int ac, char **av)
+int main(int ac, char **av, char **envp)
 {
 	char	*input = NULL;
 
 	(void)ac;
 	(void)av;
+	prog_data()->envp = copy_envp(envp);
+	prog_data()->exit_status = 0;
+	prog_data()->is_running = 1;
 	full_sighandler();
 	while (1)
 	{
@@ -49,11 +50,8 @@ int main(int ac, char **av)
 		free_commands(prog_data()->commands);
 		prog_data()->commands = NULL;
 		parser(input);
-		//we need to check if its a built in, if its not then we call out pid_t pid = fork()
-		//if pid == 0  execve and reset_signals and exit 1 
-		//else waitpid(pid, &status, 0);
-		//and so if (WIFEXISTED(status))-set_exit_status(WEXITSTATUS(status))
-		//else if (WIFSGINALED(status))-set_exit_status(128 + WTERMSIG(status))
+		collect_all_heredocs();
+		execute_all(prog_data()->commands, prog_data());
 		free(input);
 	}
 	return(0);
