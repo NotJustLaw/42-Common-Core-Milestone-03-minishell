@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 13:16:54 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/24 19:12:45 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:17:15 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool	we_need_space(char *line)
 	return (true);
 }
 
-void	*free_split(char **str)
+void	*free_split2(char **str)
 {
 	size_t	i;
 

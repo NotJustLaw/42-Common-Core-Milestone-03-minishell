@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/24 19:10:51 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:19:26 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ t_command *parser(char *line)
 		append_commands(new_cmd);
 		indexes[0]++;
 	}
-	free_split(cmd_lst);
+	// free_split2(cmd_lst);
 	printf("%d\n", indexes[1]);
 	t_command *cmd_iter = prog_data()->commands;
 	int i = 0;

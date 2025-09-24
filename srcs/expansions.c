@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:50:34 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/24 19:10:32 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:21:17 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ char *expand_argument(const char *arg)
     bool  in_double_quotes = false;
     char *result = NULL; // start empty
 
-    if (!result)
-        return (NULL);
+    // if (!result)
+    //     return (NULL);
 
     while (arg[i])
     {
