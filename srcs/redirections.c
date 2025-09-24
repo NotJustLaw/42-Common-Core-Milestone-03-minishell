@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 15:22:14 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/23 22:42:32 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/24 14:43:51 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,36 +29,40 @@ static void	append_function(t_command *cmd, int arg_idx, int append)
 	}
 }
 
+static char *strip_quotes_and_get_delimiter(const char *raw_delim, int *expand)
+{
+	char	*new_str;
+	int		i;
+	int		j;
+	char	quote_char;
+	int		has_quotes;
 
-// static void	append_function(t_command *cmd, int arg_idx, int append)
-// {
-// 	if (cmd->args[arg_idx + 1])
-// 	{
-// 		cmd->outfile = ft_strdup(cmd->args[arg_idx + 1]);
-// 		cmd->append = append;
-// 		if (cmd->append)
-// 			cmd->output_fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-// 		else
-// 			cmd->output_fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 	}
-// }
+	new_str = malloc(ft_strlen(raw_delim) + 1);
+	if (!new_str)
+		return (NULL);
+	i = 0;
+	j = 0;
+	has_quotes = 0;
+	while (raw_delim[i])
+	{
+		if (raw_delim[i] == '\'' || raw_delim[i] == '"')
+		{
+			has_quotes = 1;
+			quote_char = raw_delim[i];
+			i++;
+			while (raw_delim[i] && raw_delim[i] != quote_char)
+				new_str[j++] = raw_delim[i++];
+			if (raw_delim[i] == quote_char)
+				i++;
+		}
+		else
+			new_str[j++] = raw_delim[i++];
+	}
+	new_str[j] = '\0';
+	*expand = !has_quotes;
+	return (new_str);
+}
 
-// static void	here_dock_function(t_command *cmd, int arg_idx, int heredoc)
-// {
-//     if (cmd->args[arg_idx + 1])
-//     {
-//         if (heredoc)
-//         {
-//             cmd->delimiter = ft_strdup(cmd->args[arg_idx + 1]);
-//             cmd->heredoc = 1;
-//         }
-//         else
-//         {
-//             cmd->infile = ft_strdup(cmd->args[arg_idx + 1]);
-//             cmd->heredoc = 0;
-//         }
-//     }
-// }
 void check_redirs(void)
 {
 	t_command *cmd = prog_data()->commands;
@@ -81,18 +85,11 @@ void check_redirs(void)
 			}
 			else if (ft_strncmp(cmd->args[i], "<<", 2) == 0)
 			{
-				char *raw_delim = cmd->args[i + 1];
-				if (raw_delim[0] == '\'' || raw_delim[0] == '"')
+				if (cmd->args[i + 1])
 				{
-					cmd->heredoc_expand = 0;
+					char *raw_delim = cmd->args[i + 1];
 					cmd->heredoc = 1;
-					cmd->delimiter = ft_strndup(raw_delim + 1, strlen(raw_delim) - 2);
-				}
-				else
-				{
-					cmd->heredoc_expand = 1;
-					cmd->heredoc = 1;
-					cmd->delimiter = ft_strdup(raw_delim);
+					cmd->delimiter = strip_quotes_and_get_delimiter(raw_delim, &cmd->heredoc_expand);
 				}
 				ft_remove_args(cmd, i, 2);
 				i--;

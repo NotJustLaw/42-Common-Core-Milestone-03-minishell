@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:05:51 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/22 13:24:27 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/24 14:28:54 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int	builtin_export(char **args, t_shell *shell)
 	char	*equal;
 	char	*key;
 	char	*value;
+	char	*existing;
 
 	i = 0;
 	if (!args[1])
@@ -90,7 +91,11 @@ int	builtin_export(char **args, t_shell *shell)
 		else
 		{
 			key = ft_strdup(args[i]);
-			value = ft_strdup("");
+			existing = get_env_value(shell->envp, key);
+			if (existing)
+				value = ft_strdup(existing);
+			else
+				value = ft_strdup("");
 		}
 		if (!key || !value)
 			return (1);
@@ -100,6 +105,7 @@ int	builtin_export(char **args, t_shell *shell)
 	}
 	return (0);
 }
+
 
 int	builtin_unset(char **args, t_shell *shell)
 {
