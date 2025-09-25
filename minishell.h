@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/23 22:26:04 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 13:08:07 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,43 +73,43 @@ void		sigint_handler(int sig);
 bool		we_need_space(char *line);
 
 // static void	*free_split(char **str);
-char	*ft_strndup(const char *s1, size_t n);
-void	*ft_realloc(void *ptr, size_t old_size, size_t new_size); 
-int 	strncat_realloc(char **dest, const char *source, size_t n);
-char 	*expand_argument(const char *arg);
-void 	expansion_trade(void);
-void	check_redirs(void);
-void	free_double_ptr(char **arr);
+char		*ft_strndup(const char *s1, size_t n);
+void		*ft_realloc(void *ptr, size_t old_size, size_t new_size); 
+int 		strncat_realloc(char **dest, const char *source, size_t n);
+char 		*expand_argument(const char *arg);
+void 		expansion_trade(void);
+void		check_redirs(void);
+void		free_double_ptr(char **arr);
 
 //Execution -- | Execution module |
-void	ft_execve(t_shell *shell, t_command *cmds);
-void	execute_all(t_command *cmds, t_shell *shell);
-int		execute_single_command(t_command *cmds, t_shell *shell);
-int		execute_pipeline(t_command *cmds, t_shell *shell);
-int		get_heredoc_input(const char *limiter, t_command *cmd);
+void		ft_execve(t_shell *shell, t_command *cmds);
+void		execute_all(t_command *cmds, t_shell *shell);
+int			execute_single_command(t_command *cmds, t_shell *shell);
+int			execute_pipeline(t_command *cmds, t_shell *shell);
+int			get_heredoc_input(const char *limiter, t_command *cmd);
 
 //Exec Helpers
-void 	ft_remove_args(t_command *cmd, int start, int count);
-void	collect_all_heredocs(void);
-void	print_sorted_env(char **envp);
-void	apply_redirections(t_command *cmd);
+void 		ft_remove_args(t_command *cmd, int start, int count);
+void		collect_all_heredocs(void);
+void		print_sorted_env(char **envp);
+void		apply_redirections(t_command *cmd);
 
 //Builtin
-int		execute_builtin(char **args, t_shell *shell);
-int		builtin_chkr(char **args);
+int			execute_builtin(char **args, t_shell *shell);
+int			builtin_chkr(char **args);
 
 //Builtin cmds
-int		builtin_echo(char **args);
-int		builtin_cd(char **args);
-int		builtin_pwd(char **args);
-int		builtin_export(char **args, t_shell *shell);
-int		builtin_unset(char **args, t_shell *shell);
-int		builtin_env(char **args, t_shell *shell);
-int		builtin_exit(char **args, t_shell *shell);
+int			builtin_echo(char **args);
+int			builtin_cd(char **args, t_shell *shell);
+int			builtin_pwd(char **args);
+int			builtin_export(char **args, t_shell *shell);
+int			builtin_unset(char **args, t_shell *shell);
+int			builtin_env(char **args, t_shell *shell);
+int			builtin_exit(char **args, t_shell *shell);
 
 //Env Manager
 
 //Env Manager Utils
-int		strcnt(char **envp);
+int			strcnt(char **envp);
 
 #endif

@@ -1,0 +1,82 @@
+# More aggressive suppression for readline and its dependencies
+# For minishell @ 42
+
+{
+   readline_rl_initialize
+   Memcheck:Leak
+   ...
+   fun:rl_initialize
+   ...
+}
+
+{
+   readline_readline
+   Memcheck:Leak
+   ...
+   fun:readline
+   ...
+}
+
+{
+   readline_add_history
+   Memcheck:Leak
+   ...
+   fun:add_history
+   ...
+}
+
+{
+   readline_tgetent
+   Memcheck:Leak
+   ...
+   fun:tgetent_sp
+   ...
+}
+
+{
+   readline_nc_setupterm
+   Memcheck:Leak
+   ...
+   fun:_nc_setupterm
+   ...
+}
+
+{
+   readline_nc_read_file_entry
+   Memcheck:Leak
+   ...
+   fun:_nc_read_file_entry
+   ...
+}
+
+{
+   readline_nc_read_termtype
+   Memcheck:Leak
+   ...
+   fun:_nc_read_termtype
+   ...
+}
+
+{
+   readline_nc_first_db
+   Memcheck:Leak
+   ...
+fun:_nc_first_db
+...
+}
+
+{
+   readline_nc_trim_sgr0
+   Memcheck:Leak
+   ...
+   fun:_nc_trim_sgr0
+   ...
+}
+
+{
+   readline_rl_redisplay
+   Memcheck:Leak
+   ...
+   fun:rl_redisplay
+   ...
+}

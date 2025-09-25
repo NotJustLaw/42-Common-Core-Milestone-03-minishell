@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_builtin.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:04:34 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/24 18:59:10 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/25 13:08:16 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	execute_builtin(char **args, t_shell *shell)
 {
 	if (ft_strncmp(args[0], "cd", 3) == 0)
-		return (builtin_cd(args));
+		return (builtin_cd(args, shell));
 	else if (ft_strncmp(args[0], "echo", 5) == 0)
 		return (builtin_echo(args));
 	else if (ft_strncmp(args[0], "pwd", 4) == 0)

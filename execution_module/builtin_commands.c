@@ -6,23 +6,33 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:05:51 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/24 14:28:54 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 13:09:43 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include <limits.h>
 
 int	builtin_echo(char **args)
 {
 	int	i;
+	int	j;
 	int	n_flag;
 
 	i = 1;
 	n_flag = 0;
-	if (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
+	while (args[i] && args[i][0] == '-')
 	{
-		n_flag = 1;
-		i++;
+		j = 1;
+		while (args[i][j] == 'n')
+			j++;
+		if (args[i][j] == '\0' && j > 1)
+		{
+			n_flag = 1;
+			i++;
+		}
+		else
+			break ;
 	}
 	while (args[i])
 	{
@@ -36,20 +46,43 @@ int	builtin_echo(char **args)
 	return (0);
 }
 
-int	builtin_cd(char **args)
+int	builtin_cd(char **args, t_shell *shell)
 {
-	const char	*path;
+	char	*old_pwd;
+	char	*new_pwd;
+	char	*target_dir;
 
-	if (!args[1])
-		path = getenv("HOME");
-	else if (ft_strncmp(args[1], "-", 2) == 0)
-		path = getenv("OLDPWD");
-	else
-		path = args[1];
-	if (!path)
-		return (write(2, "cd: path not set\n", 18), 1);
-	if (chdir(path) != 0)
-		return (perror("cd"), 1);
+	old_pwd = getcwd(NULL, 0);
+	if (!old_pwd)
+		return (perror("cd: error retrieving current directory"), 1);
+	target_dir = args[1];
+	if (!target_dir)
+	{
+		target_dir = get_env_value(shell->envp, "HOME");
+		if (!target_dir || *target_dir == '\0')
+		{
+			ft_putstr_fd("cd: HOME not set\n", 2);
+			free(old_pwd);
+			return (1);
+		}
+	}
+	if (chdir(target_dir) != 0)
+	{
+		perror(target_dir);
+		free(old_pwd);
+		return (1);
+	}
+	new_pwd = getcwd(NULL, 0);
+	if (!new_pwd)
+	{
+		perror("cd: error retrieving new directory");
+		free(old_pwd);
+		return (1);
+	}
+	set_env_var(&shell->envp, "OLDPWD", old_pwd);
+	set_env_var(&shell->envp, "PWD", new_pwd);
+	free(old_pwd);
+	free(new_pwd);
 	return (0);
 }
 
@@ -75,37 +108,34 @@ int	builtin_export(char **args, t_shell *shell)
 	char	*equal;
 	char	*key;
 	char	*value;
-	char	*existing;
 
 	i = 0;
 	if (!args[1])
-		return (print_sorted_env(shell->envp), 0);
+	{
+		print_sorted_env(shell->envp);
+		return (0);
+	}
 	while (args[++i])
 	{
 		equal = ft_strchr(args[i], '=');
-		if (equal)
+		if (equal) // Case: export a=1
 		{
 			key = ft_substr(args[i], 0, equal - args[i]);
 			value = ft_strdup(equal + 1);
+			if (!key || !value)
+				return (1); // Malloc error
+			set_env_var(&shell->envp, key, value);
+			free(key);
+			free(value);
 		}
-		else
-		{
-			key = ft_strdup(args[i]);
-			existing = get_env_value(shell->envp, key);
-			if (existing)
-				value = ft_strdup(existing);
-			else
-				value = ft_strdup("");
-		}
-		if (!key || !value)
-			return (1);
-		set_env_var(&shell->envp, key, value);
-		free(key);
-		free(value);
+		// Case: export a (no '=' sign)
+		// We don't need to do anything here for the `env` command's behavior.
+		// A full bash implementation would add this to a list of variables
+		// to export if they are later assigned a value, but for the scope
+		// of not showing it in `env`, we can just do nothing.
 	}
 	return (0);
 }
-
 
 int	builtin_unset(char **args, t_shell *shell)
 {

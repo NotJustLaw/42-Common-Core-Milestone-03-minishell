@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:07:09 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/07 16:51:25 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 13:30:52 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,35 +34,32 @@ int	builtin_exit(char **args, t_shell *shell)
 {
 	int	status;
 
+	printf("exit\n");
 	if (!args[1])
-		exit(shell->exit_status);
-	if (args[1] && !args[2])
 	{
-		if (is_numeric(args[1]))
-		{
-			status = ft_atoi(args[1]);
-			exit(status);
-		}
-		else
-		{
-			ft_putstr_fd("exit: numeric argument required\n", 2);
-			exit(255);
-		}
+		shell->is_running = 0;
+		return (shell->exit_status);
 	}
 	if (args[2])
 	{
-		if (is_numeric(args[1]))
-		{
-			ft_putstr_fd("exit: too many arguments\n", 2);
-			return (1);
-		}
-		else
-		{
-			ft_putstr_fd("exit: numeric argument required\n", 2);
-			exit(255);
-		}
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		return (1);
 	}
-	return (0);
+	if (is_numeric(args[1]))
+	{
+		status = ft_atoi(args[1]);
+		shell->exit_status = (unsigned char)status;
+		shell->is_running = 0;
+	}
+	else
+	{
+		ft_putstr_fd("minishell: exit: ", 2);
+		ft_putstr_fd(args[1], 2);
+		ft_putstr_fd(": numeric argument required\n", 2);
+		shell->exit_status = 255;
+		shell->is_running = 0;
+	}
+	return (shell->exit_status);
 }
 
 static int	is_numeric(const char *s)

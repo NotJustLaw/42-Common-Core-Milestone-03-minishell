@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:50:34 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/23 22:28:15 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 14:48:25 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,18 @@ char *expand_argument(const char *arg)
         if (arg[i] == '\'' && !in_double_quotes)
         {
             in_single_quotes = !in_single_quotes;
+            if (strncat_realloc(&result, &arg[i], 1) == -1)
+                return (free(result), NULL);
             i++;
         }
         else if (arg[i] == '\"' && !in_single_quotes)
         {
             in_double_quotes = !in_double_quotes;
+            if (strncat_realloc(&result, &arg[i], 1) == -1)
+                return (free(result), NULL);
             i++;
         }
-        else if (arg[i] == '$' && !in_single_quotes)
+        else if (arg[i] == '$')
         {
             i++; // skip $
             if (!arg[i] || arg[i] == ' ' || arg[i] == '\t')
@@ -72,8 +76,8 @@ char *expand_argument(const char *arg)
             }
             else
             {
-                while (arg[i] && (ft_isalnum(arg[i]) || arg[i] == '_'))
-                    i++;
+                if (strncat_realloc(&result, "$", 1) == -1)
+                    return (free(result), NULL);
             }
         }
         else
@@ -89,31 +93,31 @@ char *expand_argument(const char *arg)
 
 void expansion_trade(void)
 {
-	t_command *cmd = prog_data()->commands;
+    t_command *cmd = prog_data()->commands;
 
-	while (cmd)
-	{
-		for (int i = 0; cmd->args && cmd->args[i]; i++)
-		{
-			char *expanded = expand_argument(cmd->args[i]);
-			if (!expanded)
-				continue;
-			free(cmd->args[i]);
-			cmd->args[i] = expanded;
-		}
-		if (cmd->infile)
-		{
-			char *expanded = expand_argument(cmd->infile);
-			free(cmd->infile);
-			cmd->infile = expanded;
-		}
-		if (cmd->outfile)
-		{
-			char *expanded = expand_argument(cmd->outfile);
-			free(cmd->outfile);
-			cmd->outfile = expanded;
-		}
-		cmd = cmd->next;
-	}
+    while (cmd)
+    {
+        for (int i = 0; cmd->args && cmd->args[i]; i++)
+        {
+            char *expanded = expand_argument(cmd->args[i]);
+            if (!expanded)
+                continue;
+            free(cmd->args[i]);
+            cmd->args[i] = expanded;
+        }
+        if (cmd->infile)
+        {
+            char *expanded = expand_argument(cmd->infile);
+            free(cmd->infile);
+            cmd->infile = expanded;
+        }
+        if (cmd->outfile)
+        {
+            char *expanded = expand_argument(cmd->outfile);
+            free(cmd->outfile);
+            cmd->outfile = expanded;
+        }
+        cmd = cmd->next;
+    }
 }
 

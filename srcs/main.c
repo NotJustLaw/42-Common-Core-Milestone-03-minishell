@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/23 21:19:35 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 13:28:51 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,32 +19,54 @@ t_shell	*prog_data(void)
 	return (&prog_data);
 }
 
+static void	final_cleanup(t_shell *shell)
+{
+	if (shell->envp)
+		free_double_ptr(shell->envp);
+	if (shell->commands)
+		free_commands(shell->commands);
+	rl_clear_history();
+}
+
 int main(int ac, char **av, char **envp)
 {
-	char	*input = NULL;
+	char	*input;
+	t_shell *shell;
 
 	(void)ac;
 	(void)av;
-	prog_data()->envp = copy_envp(envp);
-	prog_data()->exit_status = 0;
-	prog_data()->is_running = 1;
+	shell = prog_data();
+	shell->envp = copy_envp(envp);
+	shell->exit_status = 0;
+	shell->is_running = 1;
+	shell->commands = NULL;
+
 	full_sighandler();
-	while (1)
+	while (shell->is_running)
 	{
 		input = readline("minishell > ");
 		if (!input)
 		{
 			printf("exit\n");
-			exit(0);
+			break; // Break the loop, don't exit()
 		}
 		if (*input)
+		{
 			add_history(input);
-		free_commands(prog_data()->commands);
-		prog_data()->commands = NULL;
-		parser(input);
-		collect_all_heredocs();
-		execute_all(prog_data()->commands, prog_data());
+			parser(input);
+			if (shell->commands)
+			{
+				collect_all_heredocs();
+				execute_all(shell->commands, shell);
+			}
+		}
 		free(input);
+		if (shell->commands)
+		{
+			free_commands(shell->commands);
+			shell->commands = NULL;
+		}
 	}
-	return(0);
+	final_cleanup(shell);
+	return (shell->exit_status);
 }

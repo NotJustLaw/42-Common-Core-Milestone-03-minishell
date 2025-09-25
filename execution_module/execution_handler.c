@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_handler.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:08:47 by skuhlcke          #+#    #+#             */
-/*   Updated: 2025/09/24 18:58:41 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/25 14:37:15 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,21 @@
 
 static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_fd[2]);
 
-int execute_single_command(t_command *cmds, t_shell *shell)
+int	execute_single_command(t_command *cmds, t_shell *shell)
 {
-	pid_t pid;
+	pid_t	pid;
+	int		status;
 
 	if (builtin_chkr(cmds->args) && cmds->input_fd <= 0 && cmds->output_fd <= 0)
 		return (execute_builtin(cmds->args, shell));
 	if (!cmds->args || !cmds->args[0] || cmds->args[0][0] == '\0')
 	{
-		shell->exit_status = 127;
+		shell->exit_status = 0;
 		return (0);
 	}
 	pid = fork();
+	if (pid == -1)
+		return (perror("fork"), 1);
 	if (pid == 0)
 	{
 		apply_redirections(cmds);
@@ -36,60 +39,85 @@ int execute_single_command(t_command *cmds, t_shell *shell)
 		perror("execve");
 		exit(127);
 	}
-	else
-		waitpid(pid, &prog_data()->exit_status, 0);
-	prog_data()->exit_status = prog_data()->exit_status / 256;
+	// Parent closes its copy of the redirection file descriptors.
+	if (cmds->input_fd > 0)
+		close(cmds->input_fd);
+	if (cmds->output_fd > 0)
+		close(cmds->output_fd);
+	// REMOVED: if (cmds->heredoc > 0) close(cmds->heredoc); <-- THIS WAS THE BUG
+
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		shell->exit_status = WEXITSTATUS(status);
 	return (0);
 }
 
 int	execute_pipeline(t_command *cmds, t_shell *shell)
 {
-	int		pipe_fd[2];
-	int		in_fd;
-	pid_t	pid;
-	int		status;
-	int		last_pid;
+	int			pipe_fd[2];
+	int			in_fd;
+	pid_t		pid;
+	int			status;
+	pid_t		last_pid;
+	t_command	*head;
 
-	in_fd = 0;
+	in_fd = STDIN_FILENO;
+	last_pid = -1;
+	head = cmds;
 	while (cmds)
 	{
-		if (pipe_generator(pipe_fd))
-			return (perror("pipe"), -1);
-		if (!cmds->args || !cmds->args[0] || cmds->args[0][0] == '\0')
-		{
-			shell->exit_status = 127;
-			return (0);
-		}
+		if (cmds->next)
+			if (pipe(pipe_fd) == -1)
+				return (perror("pipe"), 1);
 		pid = fork();
+		if (pid == -1)
+			return (perror("fork"), 1);
 		if (pid == 0)
 			execute_child(cmds, shell, in_fd, pipe_fd);
-		else
+		if (in_fd != STDIN_FILENO)
+			close(in_fd);
+		if (cmds->next)
 		{
 			close(pipe_fd[1]);
-			if (in_fd != 0)
-				close(in_fd);
 			in_fd = pipe_fd[0];
-			cmds = cmds->next;
 		}
 		last_pid = pid;
+		cmds = cmds->next;
 	}
-	while ((pid = wait(&status)) > 0)
+	while (head)
 	{
-		if (pid == last_pid)
+		if (head->input_fd > 0)
+			close(head->input_fd);
+		if (head->output_fd > 0)
+			close(head->output_fd);
+		// REMOVED: if (head->heredoc > 0) close(head->heredoc); <-- THIS WAS THE BUG
+		head = head->next;
+	}
+	if (last_pid != -1)
+	{
+		waitpid(last_pid, &status, 0);
+		if (WIFEXITED(status))
 			shell->exit_status = WEXITSTATUS(status);
 	}
+	while (wait(NULL) > 0)
+		;
 	return (0);
 }
 
 static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_fd[2])
 {
-	dup2(in_fd, STDIN_FILENO);
-	apply_redirections(cmds);
-	if (cmds->next && cmds->output_fd <= 0)
+	if (in_fd != STDIN_FILENO)
+	{
+		dup2(in_fd, STDIN_FILENO);
+		close(in_fd);
+	}
+	if (cmds->next)
+	{
 		dup2(pipe_fd[1], STDOUT_FILENO);
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
-	close(in_fd);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+	}
+	apply_redirections(cmds);
 	if (builtin_chkr(cmds->args))
 		exit(execute_builtin(cmds->args, shell));
 	else

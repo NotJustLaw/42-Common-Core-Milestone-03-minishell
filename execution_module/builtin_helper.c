@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 20:14:46 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/22 15:28:49 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 14:54:54 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,12 @@ void	print_sorted_env(char **envp)
 
 void	apply_redirections(t_command *cmd)
 {
-	if (cmd->input_fd > 0)
+	if (cmd->input_fd > 2)
 	{
 		dup2(cmd->input_fd, STDIN_FILENO);
 		close(cmd->input_fd);
 	}
-	if (cmd->output_fd > 0)
+	if (cmd->output_fd > 2)
 	{
 		dup2(cmd->output_fd, STDOUT_FILENO);
 		close(cmd->output_fd);
