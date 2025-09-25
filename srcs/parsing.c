@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/25 14:49:45 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 20:28:19 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,8 @@ static int	quote_expansion(char *line, char *new_line)
 		*new_line++ = *line++;
 		i++;
 	}
-	else if (*(line - 1) == '<' && *line == '>')
-		return (-1);
-	else if (*(line - 1) == '>' && *line == '<')
+	else if ((*(line - 1) == '<' && *line == '>')
+		|| (*(line - 1) == '>' && *line == '<'))
 		return (-1);
 	if (*(line) == '>' || *(line) == '<')
 		return (-1);
@@ -82,80 +81,59 @@ static t_command *new_command(char *str)
 	if (!cmd)
 		return (NULL);
 	cmd->args = ft_split(str, '\2');
+	if (!cmd->args)
+	{
+		free(cmd);
+		return (NULL);
+	}
 	return (cmd);
 }
-
 
 t_command *parser(char *line)
 {
 	char		*new_line;
 	char		**cmd_lst;
 	t_command	*new_cmd;
-	int			indexes[2];
+	int			i;
 
 	new_cmd = NULL;
 	new_line = ft_calloc(ft_strlen(line) + 1, 3);
 	if (!new_line)
 		return (NULL);
 	if (!we_need_space(line))
-		return (NULL);
-	indexes[0] = 0;
-	indexes[1] = parser2(line, new_line, 0);
-	if (indexes[1] < 0)
-		return (NULL);
-	cmd_lst = ft_split(new_line, '\3');
-	printf("\n\n");
-	indexes[0] = 0;
-	while (cmd_lst[indexes[0]])
 	{
-		new_cmd = new_command(cmd_lst[indexes[0]]);
-		if (!new_cmd)
-			return (NULL);
-		append_commands(new_cmd);
-		indexes[0]++;
+		free(new_line);
+		return (NULL);
 	}
-	printf("%d\n", indexes[1]);
-	t_command *cmd_iter = prog_data()->commands;
-	int i = 0;
-	while (cmd_iter && i <= indexes[1])
+	if (parser2(line, new_line, 0) < 0)
 	{
-		int l = 0;
-		while (cmd_iter->args && cmd_iter->args[l])
+		free(new_line);
+		return (NULL);
+	}
+	cmd_lst = ft_split(new_line, '\3');
+	if (!cmd_lst)
+	{
+		free(new_line);
+		return (NULL);
+	}
+	i = 0;
+	while (cmd_lst[i])
+	{
+		new_cmd = new_command(cmd_lst[i]);
+		if (!new_cmd)
 		{
-			printf("args on command[%d]:%s\n", l, cmd_iter->args[l]);
-			l++;
+			free(new_line);
+			free_double_ptr(cmd_lst);
+			free_commands(prog_data()->commands);
+			prog_data()->commands = NULL;
+			return (NULL);
 		}
-		printf("\n");
-		cmd_iter = cmd_iter->next;
+		append_commands(new_cmd);
 		i++;
 	}
 	check_redirs();
-	t_command *c = prog_data()->commands;
-	while (c)
-	{
-		int j = 0;
-		printf("final args: ");
-		while (c->args && c->args[j])
-			printf("[%s] ", c->args[j++]);
-		printf("\n");
-		c = c->next;
-	}
 	expansion_trade();
-	t_command *cmd_iter2 = prog_data()->commands;
-	i = 0;
-	while (cmd_iter2 && i <= indexes[1])
-	{
-		int l = 0;
-		while (cmd_iter2->args && cmd_iter2->args[l])
-		{
-			printf("args on command[%d]:%s\n", l, cmd_iter2->args[l]);
-			l++;
-		}
-		printf("\n");
-		cmd_iter2 = cmd_iter2->next;
-		i++;
-	}
 	free(new_line);
 	free_double_ptr(cmd_lst);
-	return (NULL);
+	return (prog_data()->commands);
 }

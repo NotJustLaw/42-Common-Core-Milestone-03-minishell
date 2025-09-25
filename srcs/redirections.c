@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 15:22:14 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/25 14:54:51 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 20:16:04 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@ static void	append_function(t_command *cmd, int arg_idx, int append)
 {
 	if (cmd->args[arg_idx + 1])
 	{
+		if (cmd->outfile)
+			free(cmd->outfile);
+		if (cmd->output_fd > 2)
+			close(cmd->output_fd);
 		cmd->outfile = ft_strdup(cmd->args[arg_idx + 1]);
 		cmd->append = append;
 		if (cmd->append)
@@ -87,6 +91,8 @@ void check_redirs(void)
 			{
 				if (cmd->args[i + 1])
 				{
+					if (cmd->delimiter)
+						free(cmd->delimiter);
 					char *raw_delim = cmd->args[i + 1];
 					cmd->heredoc = 1;
 					cmd->delimiter = strip_quotes_and_get_delimiter(raw_delim, &cmd->heredoc_expand);
@@ -98,6 +104,8 @@ void check_redirs(void)
 			{
 				if (cmd->args[i + 1])
 				{
+					if (cmd->infile)
+						free(cmd->infile);
 					cmd->infile = ft_strdup(cmd->args[i + 1]);
 					cmd->input_fd = open(cmd->infile, O_RDONLY);
 					if (cmd->input_fd < 0)

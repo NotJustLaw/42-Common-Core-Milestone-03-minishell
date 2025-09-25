@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:08:47 by skuhlcke          #+#    #+#             */
-/*   Updated: 2025/09/25 14:37:15 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 19:57:06 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,42 @@ int	execute_single_command(t_command *cmds, t_shell *shell)
 		return (perror("fork"), 1);
 	if (pid == 0)
 	{
+		struct sigaction sa;
+		sa.sa_handler = SIG_DFL;
+		sigemptyset(&sa.sa_mask);
+		sa.sa_flags = 0;
+		sigaction(SIGINT, &sa, NULL);
+		sigaction(SIGQUIT, &sa, NULL);
 		apply_redirections(cmds);
 		if (builtin_chkr(cmds->args))
-			exit(execute_builtin(cmds->args, shell));
+		{
+			int exit_status = execute_builtin(cmds->args, shell);
+			free_shell_data(shell);
+			exit(exit_status);
+		}
 		else
 			ft_execve(shell, cmds);
 		perror("execve");
+		free_shell_data(shell);
 		exit(127);
 	}
-	// Parent closes its copy of the redirection file descriptors.
 	if (cmds->input_fd > 0)
 		close(cmds->input_fd);
 	if (cmds->output_fd > 0)
 		close(cmds->output_fd);
-	// REMOVED: if (cmds->heredoc > 0) close(cmds->heredoc); <-- THIS WAS THE BUG
-
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGINT)
+		{
+			write(1, "\n", 1);
+			shell->exit_status = 130;
+		}
+		else if (WTERMSIG(status) == SIGQUIT)
+			write(1, "Quit (core dumped)\n", 19);
+	}
 	return (0);
 }
 
@@ -90,7 +108,6 @@ int	execute_pipeline(t_command *cmds, t_shell *shell)
 			close(head->input_fd);
 		if (head->output_fd > 0)
 			close(head->output_fd);
-		// REMOVED: if (head->heredoc > 0) close(head->heredoc); <-- THIS WAS THE BUG
 		head = head->next;
 	}
 	if (last_pid != -1)
@@ -98,6 +115,18 @@ int	execute_pipeline(t_command *cmds, t_shell *shell)
 		waitpid(last_pid, &status, 0);
 		if (WIFEXITED(status))
 			shell->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			if (WTERMSIG(status) == SIGINT)
+			{
+				write(1, "\n", 1);
+				shell->exit_status = 130;
+			}
+			else if (WTERMSIG(status) == SIGQUIT)
+			{
+				write(1, "Quit (core dumped)\n", 19);
+			}
+		}
 	}
 	while (wait(NULL) > 0)
 		;
@@ -106,6 +135,12 @@ int	execute_pipeline(t_command *cmds, t_shell *shell)
 
 static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_fd[2])
 {
+	struct sigaction sa;
+	sa.sa_handler = SIG_DFL;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
 	if (in_fd != STDIN_FILENO)
 	{
 		dup2(in_fd, STDIN_FILENO);
@@ -119,9 +154,14 @@ static void	execute_child(t_command *cmds, t_shell *shell, int in_fd, int pipe_f
 	}
 	apply_redirections(cmds);
 	if (builtin_chkr(cmds->args))
-		exit(execute_builtin(cmds->args, shell));
+	{
+		int exit_status = execute_builtin(cmds->args, shell);
+		free_shell_data(shell);
+		exit(exit_status);
+	}
 	else
 		ft_execve(shell, cmds);
 	perror("execve");
+	free_shell_data(shell);
 	exit(127);
 }

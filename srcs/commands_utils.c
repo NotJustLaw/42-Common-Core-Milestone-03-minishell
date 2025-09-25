@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 10:19:03 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/23 21:51:06 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 19:15:57 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,7 @@ void	free_commands(t_command *commands)
 	while (current)
 	{
 		next = current->next;
-		if (current->args)
-		{
-			for (int i = 0; current->args[i]; i++)
-				free(current->args[i]);
-			free(current->args);
-		}
+		free_double_ptr(current->args); // Use your existing helper function
 		free(current->infile);
 		free(current->outfile);
 		free(current->delimiter);
@@ -65,3 +60,19 @@ void	free_double_ptr(char **arr)
 	free(arr);
 }
 
+void	free_shell_data(t_shell *shell)
+{
+	if (!shell)
+		return;
+	if (shell->envp)
+	{
+		free_double_ptr(shell->envp);
+		shell->envp = NULL;
+	}
+	if (shell->commands)
+	{
+		free_commands(shell->commands);
+		shell->commands = NULL;
+	}
+	rl_clear_history();
+}

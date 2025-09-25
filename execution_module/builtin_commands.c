@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:05:51 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/25 13:09:43 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 20:26:54 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,21 +118,16 @@ int	builtin_export(char **args, t_shell *shell)
 	while (args[++i])
 	{
 		equal = ft_strchr(args[i], '=');
-		if (equal) // Case: export a=1
+		if (equal)
 		{
 			key = ft_substr(args[i], 0, equal - args[i]);
 			value = ft_strdup(equal + 1);
 			if (!key || !value)
-				return (1); // Malloc error
+				return (1);
 			set_env_var(&shell->envp, key, value);
 			free(key);
 			free(value);
 		}
-		// Case: export a (no '=' sign)
-		// We don't need to do anything here for the `env` command's behavior.
-		// A full bash implementation would add this to a list of variables
-		// to export if they are later assigned a value, but for the scope
-		// of not showing it in `env`, we can just do nothing.
 	}
 	return (0);
 }

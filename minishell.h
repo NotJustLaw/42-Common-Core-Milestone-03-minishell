@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/25 13:08:07 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/25 17:52:30 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # include <stddef.h>	
 # include <sys/time.h>
 # include <sys/stat.h>
+# include <sys/ioctl.h>
 
 typedef struct s_command
 {
@@ -53,14 +54,15 @@ typedef struct s_command
 
 typedef struct s_shell
 {	
-	char	**envp;
-	t_command	*commands;
-	int			exit_status;
-	int			is_running;
+	char				**envp;
+	t_command			*commands;
+	int					exit_status;
+	int					is_running;
+	sig_atomic_t		heredoc_interrupted;
 }	t_shell;
 
 //main
-t_shell	*prog_data();
+t_shell		*prog_data();
 
 t_command	*parser(char *line);
 void		append_commands(t_command *new_node);
@@ -68,7 +70,7 @@ void		free_commands(t_command *commands);
 bool		pipe_checker(char *line);
 bool		redirection_checker(char *line);
 bool		expansion_checker(char *line);
-void		full_sighandler();
+// void		full_sighandler();
 void		sigint_handler(int sig);
 bool		we_need_space(char *line);
 
@@ -80,6 +82,7 @@ char 		*expand_argument(const char *arg);
 void 		expansion_trade(void);
 void		check_redirs(void);
 void		free_double_ptr(char **arr);
+void		free_shell_data(t_shell *shell);
 
 //Execution -- | Execution module |
 void		ft_execve(t_shell *shell, t_command *cmds);
@@ -107,7 +110,11 @@ int			builtin_unset(char **args, t_shell *shell);
 int			builtin_env(char **args, t_shell *shell);
 int			builtin_exit(char **args, t_shell *shell);
 
-//Env Manager
+//Signals
+void		signals_interactive(void);
+void		signals_execution(void);
+void		signals_heredoc(void);
+void		sigint_heredoc_handler(int sig);
 
 //Env Manager Utils
 int			strcnt(char **envp);
