@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/25 17:52:30 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/26 14:51:19 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ typedef struct s_command
 	int					input_fd;
 	int					output_fd;
 	struct s_command	*next;
-
-	//Execution
 	char				*infile;
 	char				*outfile;
 	int					append;
@@ -59,6 +57,7 @@ typedef struct s_shell
 	int					exit_status;
 	int					is_running;
 	sig_atomic_t		heredoc_interrupted;
+	int					heredoc_mode;
 }	t_shell;
 
 //main

@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:05:51 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/25 20:26:54 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/26 13:49:18 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,14 @@ int	builtin_cd(char **args, t_shell *shell)
 	{
 		perror(target_dir);
 		free(old_pwd);
-		return (1);
+		return (prog_data()->exit_status = 1, 1);
 	}
 	new_pwd = getcwd(NULL, 0);
 	if (!new_pwd)
 	{
 		perror("cd: error retrieving new directory");
 		free(old_pwd);
-		return (1);
+		return (prog_data()->exit_status = 1, 1);
 	}
 	set_env_var(&shell->envp, "OLDPWD", old_pwd);
 	set_env_var(&shell->envp, "PWD", new_pwd);

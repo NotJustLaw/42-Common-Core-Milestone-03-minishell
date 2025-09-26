@@ -1,6 +1,6 @@
 # More aggressive suppression for readline and its dependencies
 # For minishell @ 42
-# Run this command:  valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --suppressions=./readline.supp ./minishell
+# Run this command:  valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./minishell
 
 {
    readline_rl_initialize

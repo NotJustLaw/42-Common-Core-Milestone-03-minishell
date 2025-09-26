@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils_extra.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 17:46:06 by skuhlcke          #+#    #+#             */
-/*   Updated: 2025/06/05 16:53:32 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/26 13:45:42 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static char	*search_path_dirs(char *cmd, char **envp)
 		free(cmd_path);
 	}
 	free_split(paths);
-	return (perror("Not a valid command"), NULL);
+	return (NULL);
 }
 
 char	*join_path(const char *dir, const char *cmd)
