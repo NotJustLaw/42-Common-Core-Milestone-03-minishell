@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 10:19:03 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/25 19:15:57 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/27 15:04:24 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,22 @@ void	append_commands(t_command *new_node)
 	new_node->next = NULL;
 }
 
+static void	free_one_command(t_command *cmd)
+{
+	if (!cmd)
+		return ;
+	if (cmd->input_fd > 2)
+		close(cmd->input_fd);
+	if (cmd->output_fd > 2)
+		close(cmd->output_fd);
+	free(cmd->infile);
+	free(cmd->outfile);
+	free(cmd->delimiter);
+	free_heredoc_list(cmd);
+	free_double_ptr(cmd->args);
+	free(cmd);
+}
+
 void	free_commands(t_command *commands)
 {
 	t_command *current;
@@ -40,11 +56,7 @@ void	free_commands(t_command *commands)
 	while (current)
 	{
 		next = current->next;
-		free_double_ptr(current->args); // Use your existing helper function
-		free(current->infile);
-		free(current->outfile);
-		free(current->delimiter);
-		free(current);
+		free_one_command(current);
 		current = next;
 	}
 }

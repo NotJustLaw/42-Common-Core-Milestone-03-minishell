@@ -6,7 +6,7 @@
 #    By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 15:27:34 by hcarrasq          #+#    #+#              #
-#    Updated: 2025/09/22 13:10:27 by notjustlaw       ###   ########.fr        #
+#    Updated: 2025/09/27 14:48:23 by notjustlaw       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ PIPEX_OBJS = $(addprefix $(PIPEX_DIR)/, $(PIPEX_SRCS:.c=.o))
 
 # Source files
 SRCS_FILES = main.c parsing.c commands_utils.c checkers.c signal_handling.c space_utils.c expansions.c redirections.c
-EXEC_FILES = builtin_commands.c builtin_commands_2.c builtin_helper.c env_manager.c env_manager_utils.c execution_builtin.c execution_handler.c execution.c heredoc_exec.c
+EXEC_FILES = builtin_commands.c builtin_commands_2.c builtin_helper.c env_manager.c env_manager_utils.c execution_builtin.c execution_handler.c execution.c heredoc_exec.c heredoc_utils.c
 
 # Full paths
 SRCS = $(addprefix $(SRCS_DIR)/, $(SRCS_FILES))

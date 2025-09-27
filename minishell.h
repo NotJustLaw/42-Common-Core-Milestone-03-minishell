@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/26 14:51:19 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/27 14:52:05 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,13 @@
 # include <sys/stat.h>
 # include <sys/ioctl.h>
 
+/* small linked list to hold multiple heredoc delimiters per command */
+typedef struct s_heredoc
+{
+	char				*delim;
+	struct s_heredoc	*next;
+}	t_heredoc;
+
 typedef struct s_command
 {
 	char				**args;
@@ -48,6 +55,10 @@ typedef struct s_command
 	int					heredoc;
 	int					heredoc_expand;
 	char				*delimiter;
+	int					redirection_failed;
+
+	/* new: list of heredoc delimiters (left-to-right order) */
+	t_heredoc			*heredocs;
 }	t_command;
 
 typedef struct s_shell
@@ -95,6 +106,10 @@ void 		ft_remove_args(t_command *cmd, int start, int count);
 void		collect_all_heredocs(void);
 void		print_sorted_env(char **envp);
 void		apply_redirections(t_command *cmd);
+
+/* helpers to manage heredoc list on a command */
+void		add_heredoc_delim(t_command *cmd, char *delim);
+void		free_heredoc_list(t_command *cmd);
 
 //Builtin
 int			execute_builtin(char **args, t_shell *shell);

@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 15:22:14 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/25 20:16:04 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/27 15:13:37 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,17 +73,22 @@ void check_redirs(void)
 
 	while (cmd)
 	{
+		cmd->redirection_failed = 0;
 		for (int i = 0; cmd->args && cmd->args[i]; i++)
 		{
 			if (ft_strncmp(cmd->args[i], ">>", 2) == 0)
 			{
 				append_function(cmd, i, 1);
+				if (cmd->output_fd < 0)
+					cmd->redirection_failed = 1;
 				ft_remove_args(cmd, i, 2);
 				i--;
 			}
 			else if (ft_strncmp(cmd->args[i], ">", 1) == 0)
 			{
 				append_function(cmd, i, 0);
+				if (cmd->output_fd < 0)
+					cmd->redirection_failed = 1;
 				ft_remove_args(cmd, i, 2);
 				i--;
 			}
@@ -104,15 +109,32 @@ void check_redirs(void)
 			{
 				if (cmd->args[i + 1])
 				{
+					int new_fd;
+					char *new_infile;
+
+					/* prepare filename and open it first */
 					if (cmd->infile)
 						free(cmd->infile);
-					cmd->infile = ft_strdup(cmd->args[i + 1]);
-					cmd->input_fd = open(cmd->infile, O_RDONLY);
-					if (cmd->input_fd < 0)
+					new_infile = ft_strdup(cmd->args[i + 1]);
+					new_fd = open(new_infile, O_RDONLY);
+					if (new_fd < 0)
 					{
-						perror(cmd->infile);
+						/* failed to open new infile: restore state, mark error */
+						perror(new_infile);
+						cmd->redirection_failed = 1;
 						prog_data()->exit_status = 1;
-						cmd->input_fd = -1;
+						free(new_infile);
+						/* do not change cmd->input_fd */
+					}
+					else
+					{
+						/* success: close previous non-std input fd, assign new */
+						if (cmd->infile)
+							free(cmd->infile);
+						cmd->infile = new_infile;
+						if (cmd->input_fd > 2)
+							close(cmd->input_fd);
+						cmd->input_fd = new_fd;
 					}
 				}
 				ft_remove_args(cmd, i, 2);

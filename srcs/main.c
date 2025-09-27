@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:58 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/25 19:16:33 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/27 15:09:36 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,9 @@ t_shell	*prog_data(void)
 	return (&prog_data);
 }
 
-// RENAMED: This is the single source of truth for cleanup.
 static void	cleanup_and_exit(t_shell *shell)
 {
-	if (shell->commands)
-		free_commands(shell->commands);
-	if (shell->envp)
-		free_double_ptr(shell->envp);
-	rl_clear_history();
+	free_shell_data(shell);
 }
 
 int main(int ac, char **av, char **envp)
@@ -46,7 +41,7 @@ int main(int ac, char **av, char **envp)
 	{
 		signals_interactive();
 		input = readline("minishell > ");
-		if (!input) // Ctrl+D exits the loop
+		if (!input)
 		{
 			printf("exit\n");
 			break;
@@ -55,7 +50,7 @@ int main(int ac, char **av, char **envp)
 		if (*input)
 		{
 			add_history(input);
-			parser(input); // Allocates shell->commands
+			parser(input);
 			if (shell->commands)
 			{
 				collect_all_heredocs();
@@ -67,16 +62,12 @@ int main(int ac, char **av, char **envp)
 			}
 		}
 		free(input);
-
-		// At the END of the loop, free the commands from the CURRENT loop.
 		if (shell->commands)
 		{
 			free_commands(shell->commands);
 			shell->commands = NULL;
 		}
 	}
-
-	// All cleanup is now handled by this single function call before exiting.
 	cleanup_and_exit(shell);
 	return (shell->exit_status);
 }

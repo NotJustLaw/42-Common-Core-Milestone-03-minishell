@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/26 12:53:57 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/27 14:54:37 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ static int parser2(char *line, char *new_line, int l)
 static t_command *new_command(char *str)
 {
 	t_command	*cmd;
+	int			i;
 
 	cmd = ft_calloc(sizeof(t_command), 1);
 	if (!cmd)
@@ -85,6 +86,28 @@ static t_command *new_command(char *str)
 	{
 		free(cmd);
 		return (NULL);
+	}
+	/* Scan args for heredoc operators and record delimiters in cmd->heredocs.
+	   This preserves left-to-right order and removes the tokens from args so
+	   later stages don't see them. */
+	i = 0;
+	while (cmd->args[i])
+	{
+		if (cmd->args[i + 1] && ft_strncmp(cmd->args[i], "<<", 3) == 0)
+		{
+			/* record delimiter (add_heredoc_delim takes ownership of the string) */
+			add_heredoc_delim(cmd, ft_strdup(cmd->args[i + 1]));
+			cmd->heredoc = 1;
+			/* keep last delimiter in cmd->delimiter for backwards compatibility */
+			if (cmd->delimiter)
+				free(cmd->delimiter);
+			cmd->delimiter = ft_strdup(cmd->args[i + 1]);
+			/* remove operator and its delimiter from args array */
+			ft_remove_args(cmd, i, 2);
+			/* do not increment i: args shifted left, check current index again */
+			continue;
+		}
+		i++;
 	}
 	return (cmd);
 }
