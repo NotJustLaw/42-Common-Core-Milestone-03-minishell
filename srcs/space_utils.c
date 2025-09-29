@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   space_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 13:16:54 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/25 20:28:29 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 21:09:53 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,7 @@ bool	we_need_space(char *line)
 	return (true);
 }
 
-/* static void	*free_split(char **str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i])
-		free(str[i++]);
-	return (free(str), NULL);
-} */
-
-int strncat_realloc(char **dest, const char *source, size_t n)
+int	strncat_realloc(char **dest, const char *source, size_t n)
 {
 	size_t	old_len;
 	size_t	new_len;
@@ -41,7 +31,10 @@ int strncat_realloc(char **dest, const char *source, size_t n)
 
 	if (!dest || !source)
 		return (-1);
-	old_len = *dest ? ft_strlen(*dest) : 0;
+	if (*dest)
+		old_len = ft_strlen(*dest);
+	else
+		old_len = 0;
 	new_len = old_len + n;
 	new_str = ft_realloc(*dest, old_len + 1, new_len + 1);
 	if (!new_str)
@@ -67,7 +60,10 @@ void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 	new_ptr = malloc(new_size);
 	if (!new_ptr)
 		return (NULL);
-	copy_size = old_size < new_size ? old_size : new_size;
+	if (old_size < new_size)
+		copy_size = old_size;
+	else
+		copy_size = new_size;
 	ft_memcpy(new_ptr, ptr, copy_size);
 	free(ptr);
 	return (new_ptr);

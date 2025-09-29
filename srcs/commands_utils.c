@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 10:19:03 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/27 15:04:24 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 18:36:24 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	append_commands(t_command *new_node)
 {
-	t_command *current;
+	t_command	*current;
 
 	if (!new_node)
 		return ;
@@ -49,8 +49,8 @@ static void	free_one_command(t_command *cmd)
 
 void	free_commands(t_command *commands)
 {
-	t_command *current;
-	t_command *next;
+	t_command	*current;
+	t_command	*next;
 
 	current = commands;
 	while (current)
@@ -63,10 +63,11 @@ void	free_commands(t_command *commands)
 
 void	free_double_ptr(char **arr)
 {
-	int	i = 0;
+	int	i;
 
+	i = 0;
 	if (!arr)
-		return;
+		return ;
 	while (arr[i])
 		free(arr[i++]);
 	free(arr);
@@ -75,7 +76,7 @@ void	free_double_ptr(char **arr)
 void	free_shell_data(t_shell *shell)
 {
 	if (!shell)
-		return;
+		return ;
 	if (shell->envp)
 	{
 		free_double_ptr(shell->envp);

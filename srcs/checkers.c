@@ -3,20 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   checkers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 15:59:12 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/23 22:25:18 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 18:35:30 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../minishell.h"
 
 bool	pipe_checker(char *line)
 {
-	int i;
-	int found_pipes;
+	int	i;
+	int	found_pipes;
 
 	found_pipes = 0;
 	i = 0;
@@ -70,45 +69,41 @@ bool	redirection_checker(char *line)
 	return (true);
 }
 
-bool expansion_checker(char *line)
+static int	skip_dollar(char *line, int i)
 {
-    int  i = 0;
-    bool in_single_quotes = false;
-    bool in_double_quotes = false;
-
-    while (line[i])
-    {
-        if (line[i] == '\'' && !in_double_quotes)
-        {
-            in_single_quotes = !in_single_quotes;
-            i++;
-        }
-        else if (line[i] == '"' && !in_single_quotes)
-        {
-            in_double_quotes = !in_double_quotes;
-            i++;
-        }
-        else if (line[i] == '$' && !in_single_quotes)
-        {
-            i++; // skip $
-
-            if (!line[i]) // lone $ at end is allowed
-                return true;
-
-            if (line[i] == '?') // $?
-                i++;
-            else if (ft_isalpha(line[i]) || line[i] == '_')
-            {
-                while (line[i] && (ft_isalnum(line[i]) || line[i] == '_'))
-                    i++;
-            }
-            else
-                i++; // invalid variable name, skip
-        }
-        else
-            i++;
-    }
-    return true;
+	i++;
+	if (!line[i])
+		return (i);
+	if (line[i] == '?')
+		return (i + 1);
+	if (ft_isalpha(line[i]) || line[i] == '_')
+	{
+		while (line[i] && (ft_isalnum(line[i]) || line[i] == '_'))
+			i++;
+	}
+	else
+		i++;
+	return (i);
 }
 
+bool	expansion_checker(char *line)
+{
+	int		i;
+	bool	in_single;
+	bool	in_double;
 
+	i = 0;
+	in_single = false;
+	in_double = false;
+	while (line[i])
+	{
+		if (line[i] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (line[i] == '"' && !in_single)
+			in_double = !in_double;
+		else if (line[i] == '$' && !in_single)
+			i = skip_dollar(line, i) - 1;
+		i++;
+	}
+	return (true);
+}

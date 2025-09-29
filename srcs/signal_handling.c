@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   signal_handling.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 16:43:10 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/25 18:02:53 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 21:12:19 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// Handler for the main interactive prompt.
 static void	sigint_interactive_handler(int sig)
 {
 	(void)sig;
@@ -23,18 +22,18 @@ static void	sigint_interactive_handler(int sig)
 	rl_redisplay();
 }
 
-// Handler for heredoc. It is simple and uses the ioctl trick.
 void	sigint_heredoc_handler(int sig)
 {
 	(void)sig;
 	prog_data()->heredoc_interrupted = 1;
-    write(STDOUT_FILENO, "\n", 1);
-    close(STDIN_FILENO);
+	write(STDOUT_FILENO, "\n", 1);
+	close(STDIN_FILENO);
 }
 
 void	signals_interactive(void)
 {
-	struct sigaction sa;
+	struct sigaction	sa;
+
 	sa.sa_handler = sigint_interactive_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
@@ -45,7 +44,8 @@ void	signals_interactive(void)
 
 void	signals_execution(void)
 {
-	struct sigaction sa;
+	struct sigaction	sa;
+
 	sa.sa_handler = SIG_DFL;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;

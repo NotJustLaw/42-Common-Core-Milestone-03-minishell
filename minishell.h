@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/29 18:13:39 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/29 21:24:30 by henrique-re      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,20 @@ bool		expansion_checker(char *line);
 // void		full_sighandler();
 void		sigint_handler(int sig);
 bool		we_need_space(char *line);
+bool		add_split_words(char ***new_args, int *size, char **split);
+bool		add_one_word(char ***new_args, int *size, char *word);
+char 		**add_to_array(char **array, int *size, char *str);
+bool		is_unquoted_var(const char *arg);
+void		append_function(t_command *cmd, int arg_idx, int append);
+void		assign_input_fd(t_command *cmd, char *new_in, int new_fd);
+int			parser2(char *line, char *new_line, int l);
+
 
 // static void	*free_split(char **str);
 char		*ft_strndup(const char *s1, size_t n);
 void		*ft_realloc(void *ptr, size_t old_size, size_t new_size); 
 int 		strncat_realloc(char **dest, const char *source, size_t n);
-char 		*expand_argument(const char *arg);
+char 		*expand_argument(const char *arg, int i, bool in_s, bool in_d);
 void 		expansion_trade(void);
 void		check_redirs(void);
 void		free_double_ptr(char **arr);

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+         #
+#    By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 15:27:34 by hcarrasq          #+#    #+#              #
-#    Updated: 2025/09/27 14:48:23 by notjustlaw       ###   ########.fr        #
+#    Updated: 2025/09/29 21:30:39 by henrique-re      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ PIPEX_SRCS = pipex_bonus.c pipex_utils.c pipex_bonus_utils.c \
 PIPEX_OBJS = $(addprefix $(PIPEX_DIR)/, $(PIPEX_SRCS:.c=.o))
 
 # Source files
-SRCS_FILES = main.c parsing.c commands_utils.c checkers.c signal_handling.c space_utils.c expansions.c redirections.c
+SRCS_FILES = main.c parsing.c commands_utils.c checkers.c signal_handling.c space_utils.c expansions.c redirections.c exapansion_helpers.c expand_argument.c redirections_helpers.c parsing_helpers.c
 EXEC_FILES = builtin_commands.c builtin_commands_2.c builtin_helper.c env_manager.c env_manager_utils.c execution_builtin.c execution_handler.c execution.c heredoc_exec.c heredoc_utils.c
 
 # Full paths
