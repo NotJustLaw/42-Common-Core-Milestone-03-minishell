@@ -6,7 +6,7 @@
 /*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:52:02 by notjustlaw        #+#    #+#             */
-/*   Updated: 2025/09/29 18:14:22 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/29 22:08:07 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,34 +24,54 @@ static void	setup_heredoc_signals(void)
 	sigaction(SIGQUIT, &sa, NULL);
 }
 
-int	get_heredoc_input(const char *limiter, t_command *cmd)
+static int init_heredoc_resources(int here_pipe[2], int *stdin_copy)
 {
-	int		here_pipe[2];
-	char	*line;
-	size_t	len;
-	int		stdin_copy;
-	int		eof_reached;
-
 	if (pipe(here_pipe) < 0)
 		return (perror("pipe"), -1);
-	stdin_copy = dup(STDIN_FILENO);
-	if (stdin_copy == -1)
+	*stdin_copy = dup(STDIN_FILENO);
+	if (*stdin_copy == -1)
 	{
 		close(here_pipe[0]);
 		close(here_pipe[1]);
 		return (perror("dup"), -1);
 	}
+	return (0);
+}
+
+static int is_limiter_line(const char *line, const char *limiter)
+{
+	size_t len;
+
+	if (!line || !limiter)
+		return (0);
 	len = ft_strlen(limiter);
-	eof_reached = 0;
-	setup_heredoc_signals();
+	return (ft_strncmp(line, limiter, len) == 0 && line[len] == '\0');
+}
+
+static void write_heredoc_line(int fd, char *line, t_command *cmd)
+{
+	if (cmd && cmd->heredoc_expand)
+	{
+		char *orig = line;
+		line = expand_argument_heredoc(orig);
+		free(orig);
+	}
+	if (line)
+		write(fd, line, ft_strlen(line));
+	write(fd, "\n", 1);
+	free(line);
+}
+
+static int read_heredoc_loop(int here_pipe[2], const char *limiter,
+							 t_command *cmd, int stdin_copy)
+{
+	char *line;
+
 	while (1)
 	{
 		line = readline("> ");
 		if (!line)
-		{
-			eof_reached = 1;
-			break ;
-		}
+			return (1);
 		if (prog_data()->heredoc_interrupted)
 		{
 			free(line);
@@ -61,23 +81,28 @@ int	get_heredoc_input(const char *limiter, t_command *cmd)
 			close(stdin_copy);
 			return (-1);
 		}
-		if ((ft_strncmp(line, limiter, len) == 0) && line[len] == '\0')
+		if (is_limiter_line(line, limiter))
 		{
 			free(line);
-			break ;
+			return (0);
 		}
-		if (cmd && cmd->heredoc_expand)
-		{
-			char *orig = line;
-			line = expand_argument_heredoc(orig);
-			free(orig);
-		}
-		if (line)
-			write(here_pipe[1], line, ft_strlen(line));
-		write(here_pipe[1], "\n", 1);
-		free(line);
+		write_heredoc_line(here_pipe[1], line, cmd);
 	}
-	if (eof_reached && !prog_data()->heredoc_interrupted)
+}
+
+int get_heredoc_input(const char *limiter, t_command *cmd)
+{
+	int here_pipe[2];
+	int stdin_copy;
+	int status;
+
+	if (init_heredoc_resources(here_pipe, &stdin_copy) < 0)
+		return (-1);
+	setup_heredoc_signals();
+	status = read_heredoc_loop(here_pipe, limiter, cmd, stdin_copy);
+	if (status == -1)
+		return (-1);
+	if (status == 1 && !prog_data()->heredoc_interrupted)
 		fprintf(stderr, "minishell: warning: here-document at line 1 delimited by end-of-file (wanted `%s')\n", limiter);
 	dup2(stdin_copy, STDIN_FILENO);
 	close(stdin_copy);
@@ -90,34 +115,28 @@ int	get_heredoc_input(const char *limiter, t_command *cmd)
 	return (here_pipe[0]);
 }
 
-int	process_heredoc_list_for_cmd(t_command *cmd)
+static int	handle_single_heredoc(t_command *cmd)
 {
-	t_heredoc	*h;
-	int			kept_fd;
+	int	fd;
 
-	kept_fd = -1;
-	if ((!cmd->heredocs || cmd->heredocs == NULL) && cmd->heredoc && cmd->delimiter)
+	fd = get_heredoc_input(cmd->delimiter, cmd);
+	if (fd == -1)
 	{
-		int fd;
-
-		fd = get_heredoc_input(cmd->delimiter, cmd);
-		if (fd == -1)
-		{
-			if (prog_data()->heredoc_interrupted)
-				prog_data()->exit_status = 130;
-			return (1);
-		}
-		if (cmd->input_fd > 2)
-			close(cmd->input_fd);
-		cmd->input_fd = fd;
-		return (0);
+		if (prog_data()->heredoc_interrupted)
+			prog_data()->exit_status = 130;
+		return (1);
 	}
-	if (!cmd->heredocs)
-		return (0);
-	h = cmd->heredocs;
+	if (cmd->input_fd > 2)
+		close(cmd->input_fd);
+	cmd->input_fd = fd;
+	return (0);
+}
+
+static int	process_heredoc_list(t_heredoc *h, t_command *cmd, int fd, int kept_fd)
+{
 	while (h)
 	{
-		int fd = get_heredoc_input(h->delim, cmd);
+		fd = get_heredoc_input(h->delim, cmd);
 		if (fd == -1)
 		{
 			if (kept_fd != -1)
@@ -138,6 +157,15 @@ int	process_heredoc_list_for_cmd(t_command *cmd)
 		cmd->input_fd = kept_fd;
 	}
 	return (0);
+}
+
+int	process_heredoc_list_for_cmd(t_command *cmd)
+{
+	if ((!cmd->heredocs || cmd->heredocs == NULL) && cmd->heredoc && cmd->delimiter)
+		return (handle_single_heredoc(cmd));
+	if (!cmd->heredocs)
+		return (0);
+	return (process_heredoc_list(cmd->heredocs, cmd, 0, -1));
 }
 
 void	collect_all_heredocs(void)

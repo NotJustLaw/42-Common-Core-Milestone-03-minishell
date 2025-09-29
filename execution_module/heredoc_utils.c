@@ -6,7 +6,7 @@
 /*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:00:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/29 18:21:52 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/29 21:24:34 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,3 +113,46 @@ char *expand_argument_heredoc(const char *arg)
     return result;
 }
 
+static int	run_pipeline_cmd(t_command *cmds, t_shell *shell,
+			int *in_fd, pid_t *last_pid)
+{
+	int	pipe_fd[2];
+	pid_t	pid;
+
+	if (cmds->next && pipe(pipe_fd) == -1)
+		return (perror("pipe"), 1);
+	pid = fork();
+	if (pid == -1)
+		return (perror("fork"), 1);
+	if (pid == 0)
+		execute_child(cmds, shell, *in_fd, pipe_fd);
+	if (*in_fd != STDIN_FILENO)
+		close(*in_fd);
+	if (cmds->next)
+	{
+		close(pipe_fd[1]);
+		*in_fd = pipe_fd[0];
+	}
+	*last_pid = pid;
+	return (0);
+}
+
+int	pipeline_fork_and_manage(t_command *cmds, t_shell *shell)
+{
+	int		in_fd;
+	int		status;
+	pid_t	last_pid;
+
+	in_fd = STDIN_FILENO;
+	last_pid = -1;
+	while (cmds)
+	{
+		if (run_pipeline_cmd(cmds, shell, &in_fd, &last_pid))
+			return (1);
+		cmds = cmds->next;
+	}
+	while (wait(&status) > 0)
+		if (WIFEXITED(status))
+			shell->exit_status = WEXITSTATUS(status);
+	return (0);
+}

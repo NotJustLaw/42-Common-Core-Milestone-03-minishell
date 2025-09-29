@@ -6,7 +6,7 @@
 /*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/29 18:13:39 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/29 21:30:23 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ int			execute_single_command(t_command *cmds, t_shell *shell);
 int			execute_pipeline(t_command *cmds, t_shell *shell);
 int			get_heredoc_input(const char *limiter, t_command *cmd);
 char		*expand_argument_heredoc(const char *arg);
+void		execute_child(t_command *cmds, t_shell *shell,
+			int in_fd, int pipe_fd[2]);
 
 //Exec Helpers
 void 		ft_remove_args(t_command *cmd, int start, int count);
@@ -108,6 +110,10 @@ void		collect_all_heredocs(void);
 void		print_sorted_env(char **envp);
 void		apply_redirections(t_command *cmd);
 char		*strip_quotes_and_get_delimiter(const char *raw_delim, int *expand);
+int			handle_n_flags(char **args, int *n_flag);
+int			single_command_fork_wait(t_command *cmds, t_shell *shell);
+int			pipeline_fork_and_manage(t_command *cmds, t_shell *shell);
+
 
 /* helpers to manage heredoc list on a command */
 void		add_heredoc_delim(t_command *cmd, char *delim);
@@ -116,6 +122,7 @@ void		free_heredoc_list(t_command *cmd);
 //Builtin
 int			execute_builtin(char **args, t_shell *shell);
 int			builtin_chkr(char **args);
+int			update_pwd(t_shell *shell, char *old_pwd);
 
 //Builtin cmds
 int			builtin_echo(char **args);
@@ -125,6 +132,9 @@ int			builtin_export(char **args, t_shell *shell);
 int			builtin_unset(char **args, t_shell *shell);
 int			builtin_env(char **args, t_shell *shell);
 int			builtin_exit(char **args, t_shell *shell);
+int			replace_env_var(char ***env, const char *key,
+		char *composed, int key_len);
+int			add_env_var(char ***env, char *composed, int count);
 
 //Signals
 void		signals_interactive(void);

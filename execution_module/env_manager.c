@@ -3,26 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   env_manager.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 16:56:38 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/23 13:59:04 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 21:18:26 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-//Make a deep copy of the system-provided envp so you can manage it yourself
 char	**copy_envp(char **envp)
 {
-	int		lenght;
+	int		len;
 	char	**copy;
 	int		i;
 
 	if (!envp)
 		return (NULL);
-	lenght = strcnt(envp);
-	copy = malloc(sizeof(char *) * (lenght + 1));
+	len = strcnt(envp);
+	copy = malloc(sizeof(char *) * (len + 1));
 	if (!copy)
 		return (NULL);
 	i = -1;
@@ -35,7 +34,7 @@ char	**copy_envp(char **envp)
 	copy[i] = NULL;
 	return (copy);
 }
-//Search for key= in your custom env list and return the value part
+
 char	*get_env_value(char **env, const char *key)
 {
 	int		key_len;
@@ -47,24 +46,21 @@ char	*get_env_value(char **env, const char *key)
 	i = -1;
 	while (env[++i])
 	{
-		if (ft_strncmp(env[i], key, key_len) == 0 && env[i][key_len] == '=')
+		if (ft_strncmp(env[i], key, key_len) == 0
+			&& env[i][key_len] == '=')
 			return (&env[i][key_len + 1]);
 	}
 	return (NULL);
 }
-//Set or update key=value in your environment
+
 int	set_env_var(char ***env, const char *key, const char *value)
 {
-	int		key_len;
 	char	*composed;
 	char	*tmp;
-	char	**new_env;
-	int		i;
-	int		j;
+	int		count;
 
 	if (!env || !key || !value)
 		return (1);
-	key_len = ft_strlen(key);
 	tmp = ft_strjoin(key, "=");
 	if (!tmp)
 		return (1);
@@ -72,46 +68,28 @@ int	set_env_var(char ***env, const char *key, const char *value)
 	free(tmp);
 	if (!composed)
 		return (1);
-	i = 0;
-	while ((*env)[i])
-	{
-		if (strncmp((*env)[i], key, key_len) == 0 && (*env)[i][key_len] == '=')
-		{
-			free((*env)[i]);
-			(*env)[i] = composed;
-			return (0);
-		}
-		i++;
-	}
-	new_env = malloc((i + 2) * sizeof(char *));
-	if (!new_env)
-	{
-		free(composed);
-		return (1);
-	}
-	j = -1;
-	while (++j < i)
-		new_env[j] = (*env)[j];
-	new_env[i] = composed;
-	new_env[i + 1] = NULL;
-	free(*env);
-	(*env) = new_env;
-	return (0);
+	if (replace_env_var(env, key, composed, ft_strlen(key)))
+		return (0);
+	count = 0;
+	while ((*env)[count])
+		count++;
+	return (add_env_var(env, composed, count));
 }
-//Remove the key=value entry from your env list
+
 int	unset_env_var(char ***env, const char *key)
 {
-	int	i;
-	int	j;
-	int	key_len;
+	int		i;
+	int		j;
+	int		key_len;
 
 	if (!env || !*env || !key)
 		return (1);
-	i = -1;
 	key_len = ft_strlen(key);
+	i = -1;
 	while ((*env)[++i])
 	{
-		if (ft_strncmp((*env)[i], key, key_len) == 0 && (*env)[i][key_len] == '=')
+		if (ft_strncmp((*env)[i], key, key_len) == 0
+			&& (*env)[i][key_len] == '=')
 		{
 			free((*env)[i]);
 			j = i;
@@ -126,14 +104,14 @@ int	unset_env_var(char ***env, const char *key)
 	}
 	return (1);
 }
-//Free the memory used by your char **env when Minishell exits 
+
 void	free_env(char **env)
 {
-	int i;
+	int		i;
 
-	i= 0;
 	if (!env)
 		return ;
+	i = 0;
 	while (env[i])
 		free(env[i++]);
 	free(env);

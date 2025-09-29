@@ -3,37 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_commands.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:05:51 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/26 13:49:18 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 21:12:10 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <limits.h>
 
 int	builtin_echo(char **args)
 {
 	int	i;
-	int	j;
 	int	n_flag;
 
-	i = 1;
-	n_flag = 0;
-	while (args[i] && args[i][0] == '-')
-	{
-		j = 1;
-		while (args[i][j] == 'n')
-			j++;
-		if (args[i][j] == '\0' && j > 1)
-		{
-			n_flag = 1;
-			i++;
-		}
-		else
-			break ;
-	}
+	i = handle_n_flags(args, &n_flag);
 	while (args[i])
 	{
 		printf("%s", args[i]);
@@ -49,41 +33,30 @@ int	builtin_echo(char **args)
 int	builtin_cd(char **args, t_shell *shell)
 {
 	char	*old_pwd;
-	char	*new_pwd;
-	char	*target_dir;
+	char	*target;
 
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
 		return (perror("cd: error retrieving current directory"), 1);
-	target_dir = args[1];
-	if (!target_dir)
+	target = args[1];
+	if (!target)
 	{
-		target_dir = get_env_value(shell->envp, "HOME");
-		if (!target_dir || *target_dir == '\0')
+		target = get_env_value(shell->envp, "HOME");
+		if (!target || *target == '\0')
 		{
 			ft_putstr_fd("cd: HOME not set\n", 2);
 			free(old_pwd);
 			return (1);
 		}
 	}
-	if (chdir(target_dir) != 0)
+	if (chdir(target) != 0)
 	{
-		perror(target_dir);
+		perror(target);
 		free(old_pwd);
-		return (prog_data()->exit_status = 1, 1);
+		prog_data()->exit_status = 1;
+		return (1);
 	}
-	new_pwd = getcwd(NULL, 0);
-	if (!new_pwd)
-	{
-		perror("cd: error retrieving new directory");
-		free(old_pwd);
-		return (prog_data()->exit_status = 1, 1);
-	}
-	set_env_var(&shell->envp, "OLDPWD", old_pwd);
-	set_env_var(&shell->envp, "PWD", new_pwd);
-	free(old_pwd);
-	free(new_pwd);
-	return (0);
+	return (update_pwd(shell, old_pwd));
 }
 
 int	builtin_pwd(char **args)
@@ -111,10 +84,7 @@ int	builtin_export(char **args, t_shell *shell)
 
 	i = 0;
 	if (!args[1])
-	{
-		print_sorted_env(shell->envp);
-		return (0);
-	}
+		return (print_sorted_env(shell->envp), 0);
 	while (args[++i])
 	{
 		equal = ft_strchr(args[i], '=');

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_commands_2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:07:09 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/25 19:00:20 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 18:36:30 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,7 @@ int	builtin_exit(char **args, t_shell *shell)
 		return (shell->exit_status);
 	}
 	if (args[2])
-	{
-		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-		return (1);
-	}
+		return (ft_putstr_fd("minishell: exit: too many arguments\n", 2), 1);
 	if (is_numeric(args[1]))
 	{
 		status = ft_atoi(args[1]);
@@ -64,7 +61,9 @@ int	builtin_exit(char **args, t_shell *shell)
 
 static int	is_numeric(const char *s)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	if (s[0] == '-' || s[0] == '+')
 		i++;
 	while (s[i])

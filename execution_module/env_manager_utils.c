@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_manager_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 15:56:15 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/27 14:53:09 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 21:18:41 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,42 @@ void	ft_remove_args(t_command *cmd, int start, int count)
 	while (cmd->args[j])
 		cmd->args[k++] = cmd->args[j++];
 	cmd->args[k] = NULL;
+}
+
+int	replace_env_var(char ***env, const char *key,
+		char *composed, int key_len)
+{
+	int	i;
+
+	i = 0;
+	while ((*env)[i])
+	{
+		if (ft_strncmp((*env)[i], key, key_len) == 0
+			&& (*env)[i][key_len] == '=')
+		{
+			free((*env)[i]);
+			(*env)[i] = composed;
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	add_env_var(char ***env, char *composed, int count)
+{
+	char	**new_env;
+	int		j;
+
+	new_env = malloc((count + 2) * sizeof(char *));
+	if (!new_env)
+		return (free(composed), 1);
+	j = -1;
+	while (++j < count)
+		new_env[j] = (*env)[j];
+	new_env[count] = composed;
+	new_env[count + 1] = NULL;
+	free(*env);
+	*env = new_env;
+	return (0);
 }
