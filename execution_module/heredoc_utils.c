@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:00:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/27 14:48:11 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 18:21:52 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,3 +62,54 @@ void free_heredoc_list(t_command *cmd)
 	}
 	cmd->heredocs = NULL;
 }
+
+char *expand_argument_heredoc(const char *arg)
+{
+    int i = 0;
+    char *result = calloc(1, 1);
+    if (!result)
+        return NULL;
+
+    while (arg[i])
+    {
+        if (arg[i] == '$')
+        {
+            i++;
+            if (arg[i] == '?')
+            {
+                char *status_str = ft_itoa(prog_data()->exit_status);
+                if (!status_str || strncat_realloc(&result, status_str, strlen(status_str)) == -1)
+                    return (free(result), NULL);
+                free(status_str);
+                i++;
+            }
+            else if (ft_isalpha(arg[i]) || arg[i] == '_')
+            {
+                int start = i;
+                while (arg[i] && (ft_isalnum(arg[i]) || arg[i] == '_'))
+                    i++;
+                int var_len = i - start;
+                char *var_name = ft_strndup(&arg[start], var_len);
+                if (!var_name)
+                    return (free(result), NULL);
+                char *value = get_env_value(prog_data()->envp, var_name);
+                free(var_name);
+                if (value && strncat_realloc(&result, value, strlen(value)) == -1)
+                    return (free(result), NULL);
+            }
+            else
+            {
+                if (strncat_realloc(&result, "$", 1) == -1)
+                    return (free(result), NULL);
+            }
+        }
+        else
+        {
+            if (strncat_realloc(&result, &arg[i], 1) == -1)
+                return (free(result), NULL);
+            i++;
+        }
+    }
+    return result;
+}
+

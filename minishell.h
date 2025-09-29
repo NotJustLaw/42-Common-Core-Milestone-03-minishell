@@ -6,7 +6,7 @@
 /*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/29 17:37:33 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/29 18:13:39 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ void		execute_all(t_command *cmds, t_shell *shell);
 int			execute_single_command(t_command *cmds, t_shell *shell);
 int			execute_pipeline(t_command *cmds, t_shell *shell);
 int			get_heredoc_input(const char *limiter, t_command *cmd);
+char		*expand_argument_heredoc(const char *arg);
 
 //Exec Helpers
 void 		ft_remove_args(t_command *cmd, int start, int count);

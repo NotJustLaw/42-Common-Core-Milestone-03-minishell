@@ -6,7 +6,7 @@
 /*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/29 17:35:43 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:54:38 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,13 +83,7 @@ static t_command *new_command(char *str)
 		return (NULL);
 	cmd->args = ft_split(str, '\2');
 	if (!cmd->args)
-	{
-		free(cmd);
-		return (NULL);
-	}
-	/* Scan args for heredoc operators and record delimiters in cmd->heredocs.
-	   This preserves left-to-right order and removes the tokens from args so
-	   later stages don't see them. */
+		return (free(cmd), NULL);
 	i = 0;
 	while (cmd->args[i])
 	{
@@ -97,16 +91,12 @@ static t_command *new_command(char *str)
 		{
 			int expand;
 			char *stripped = strip_quotes_and_get_delimiter(cmd->args[i + 1], &expand);
-
-			add_heredoc_delim(cmd, stripped);  // take ownership of stripped
+			add_heredoc_delim(cmd, stripped);
 			cmd->heredoc = 1;
-
-			// compatibility stuff
 			if (cmd->delimiter)
 				free(cmd->delimiter);
 			cmd->delimiter = ft_strdup(stripped);
 			cmd->heredoc_expand = expand;
-
 			ft_remove_args(cmd, i, 2);
 			continue;
 		}

@@ -6,7 +6,7 @@
 /*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:52:02 by notjustlaw        #+#    #+#             */
-/*   Updated: 2025/09/29 17:07:57 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/09/29 18:14:22 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	get_heredoc_input(const char *limiter, t_command *cmd)
 		if (cmd && cmd->heredoc_expand)
 		{
 			char *orig = line;
-			line = expand_argument(orig);
+			line = expand_argument_heredoc(orig);
 			free(orig);
 		}
 		if (line)
