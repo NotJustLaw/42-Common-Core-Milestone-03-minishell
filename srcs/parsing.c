@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/27 14:54:37 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 17:35:43 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,16 +95,19 @@ static t_command *new_command(char *str)
 	{
 		if (cmd->args[i + 1] && ft_strncmp(cmd->args[i], "<<", 3) == 0)
 		{
-			/* record delimiter (add_heredoc_delim takes ownership of the string) */
-			add_heredoc_delim(cmd, ft_strdup(cmd->args[i + 1]));
+			int expand;
+			char *stripped = strip_quotes_and_get_delimiter(cmd->args[i + 1], &expand);
+
+			add_heredoc_delim(cmd, stripped);  // take ownership of stripped
 			cmd->heredoc = 1;
-			/* keep last delimiter in cmd->delimiter for backwards compatibility */
+
+			// compatibility stuff
 			if (cmd->delimiter)
 				free(cmd->delimiter);
-			cmd->delimiter = ft_strdup(cmd->args[i + 1]);
-			/* remove operator and its delimiter from args array */
+			cmd->delimiter = ft_strdup(stripped);
+			cmd->heredoc_expand = expand;
+
 			ft_remove_args(cmd, i, 2);
-			/* do not increment i: args shifted left, check current index again */
 			continue;
 		}
 		i++;

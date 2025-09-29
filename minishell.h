@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/27 14:52:05 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 17:37:33 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ void 		ft_remove_args(t_command *cmd, int start, int count);
 void		collect_all_heredocs(void);
 void		print_sorted_env(char **envp);
 void		apply_redirections(t_command *cmd);
+char		*strip_quotes_and_get_delimiter(const char *raw_delim, int *expand);
 
 /* helpers to manage heredoc list on a command */
 void		add_heredoc_delim(t_command *cmd, char *delim);

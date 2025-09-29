@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
+/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 15:22:14 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/27 15:13:37 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/09/29 17:39:13 by skuhlcke         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,38 +33,38 @@ static void	append_function(t_command *cmd, int arg_idx, int append)
 	}
 }
 
-static char *strip_quotes_and_get_delimiter(const char *raw_delim, int *expand)
+char *strip_quotes_and_get_delimiter(const char *raw_delim, int *expand)
 {
-	char	*new_str;
-	int		i;
-	int		j;
-	char	quote_char;
-	int		has_quotes;
+    char    *new_str;
+    int     i = 0;
+    int     j = 0;
+    bool    has_quotes = false;
+    char    quote_char = 0;
 
-	new_str = malloc(ft_strlen(raw_delim) + 1);
-	if (!new_str)
-		return (NULL);
-	i = 0;
-	j = 0;
-	has_quotes = 0;
-	while (raw_delim[i])
-	{
-		if (raw_delim[i] == '\'' || raw_delim[i] == '"')
-		{
-			has_quotes = 1;
-			quote_char = raw_delim[i];
-			i++;
-			while (raw_delim[i] && raw_delim[i] != quote_char)
-				new_str[j++] = raw_delim[i++];
-			if (raw_delim[i] == quote_char)
-				i++;
-		}
-		else
-			new_str[j++] = raw_delim[i++];
-	}
-	new_str[j] = '\0';
-	*expand = !has_quotes;
-	return (new_str);
+    for (int k = 0; raw_delim[k]; k++)
+    {
+        if (raw_delim[k] == '\'' || raw_delim[k] == '"')
+        {
+            has_quotes = true;
+            break;
+        }
+    }
+    *expand = !has_quotes;
+    new_str = malloc(ft_strlen(raw_delim) + 1);
+    if (!new_str)
+        return (NULL);
+    while (raw_delim[i])
+    {
+        if ((raw_delim[i] == '\'' || raw_delim[i] == '"') && quote_char == 0)
+            quote_char = raw_delim[i];
+        else if (raw_delim[i] == quote_char)
+            quote_char = 0;
+        else
+            new_str[j++] = raw_delim[i];
+        i++;
+    }
+    new_str[j] = '\0';
+    return (new_str);
 }
 
 void check_redirs(void)
@@ -73,6 +73,7 @@ void check_redirs(void)
 
 	while (cmd)
 	{
+		dprintf(2, ">>> ENTER check_redirs()\n");
 		cmd->redirection_failed = 0;
 		for (int i = 0; cmd->args && cmd->args[i]; i++)
 		{
