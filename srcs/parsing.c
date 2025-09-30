@@ -6,7 +6,7 @@
 /*   By: hcarrasq <hcarrasq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/24 19:19:26 by hcarrasq         ###   ########.fr       */
+/*   Updated: 2025/09/30 17:30:09 by hcarrasq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,25 @@ static int	quote_expansion(char *line, char *new_line)
 	return (i);
 }
 
+int	parser39(char **line, char **new_line, int *i, int *l, int flag)
+{
+	if (flag == 0 && **line == '|')
+	{
+		**line = '\3';
+		l++;
+	}
+	else if (flag == 0 && (**line == '<' || **line == '>'))
+	{	
+		*i = quote_expansion(*line, *new_line);
+		if (*i < 0)
+			return (-1);
+		*line += *i;
+		*new_line += *i + 2;
+		return (1);
+	}
+	return (0);
+}
+
 static int parser2(char *line, char *new_line, int l)
 {
 	int	i;
@@ -53,20 +72,9 @@ static int parser2(char *line, char *new_line, int l)
 			line++;
 			continue;
 		}
-		else if (flag == 0 && *line == '|')
-		{
-			*line = '\3';
-			l++;
-		}
-		else if (flag == 0 && (*line == '<' || *line == '>'))
-		{	
-			i = quote_expansion(line, new_line);
-			if (i < 0)
-				return (-1);
-			line += i;
-			new_line += i + 2;
-			continue;
-		}
+		else
+			if(parser39(&line, &new_line, &i, &l, flag))
+				continue ;
 		*new_line++ = *line++;
 	}
 	if (flag == '\'' || flag == '\"')
@@ -101,6 +109,7 @@ t_command *parser(char *line)
 		return (NULL);
 	indexes[0] = 0;
 	indexes[1] = parser2(line, new_line, 0);
+	printf("%s", new_line);
 	if (indexes[1] < 0)
 		return (NULL);
 	cmd_lst = ft_split(new_line, '\3');
