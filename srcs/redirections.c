@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 15:22:14 by henrique-re       #+#    #+#             */
-/*   Updated: 2025/09/29 21:21:12 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/10/01 16:55:07 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ static void	handle_output(t_command *cmd, int *i, int append)
 	if (cmd->output_fd < 0)
 		cmd->redirection_failed = 1;
 	ft_remove_args(cmd, *i, 2);
-	(*i)--;
+	if (*i > 0)
+		(*i)--;
 }
 
 static void	handle_heredoc(t_command *cmd, int *i)
@@ -35,7 +36,8 @@ static void	handle_heredoc(t_command *cmd, int *i)
 				&cmd->heredoc_expand);
 	}
 	ft_remove_args(cmd, *i, 2);
-	(*i)--;
+	if (*i > 0)
+		(*i)--;
 }
 
 static void	handle_input(t_command *cmd, int *i)
@@ -46,7 +48,8 @@ static void	handle_input(t_command *cmd, int *i)
 	if (!cmd->args[*i + 1])
 	{
 		ft_remove_args(cmd, *i, 2);
-		(*i)--;
+		if (*i > 0)
+			(*i)--;
 		return ;
 	}
 	new_in = ft_strdup(cmd->args[*i + 1]);
@@ -61,7 +64,8 @@ static void	handle_input(t_command *cmd, int *i)
 	else
 		assign_input_fd(cmd, new_in, new_fd);
 	ft_remove_args(cmd, *i, 2);
-	(*i)--;
+	if (*i > 0)
+		(*i)--;
 }
 
 static void	scan_redirs(t_command *cmd)

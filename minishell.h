@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/29 21:24:30 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/10/01 17:05:12 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <stddef.h>
 # include <pthread.h>
 # include <stdio.h>
+# include <errno.h>
+# include <string.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdint.h>
@@ -128,7 +130,7 @@ int			builtin_chkr(char **args);
 //Builtin cmds
 int			builtin_echo(char **args);
 int			builtin_cd(char **args, t_shell *shell);
-int			builtin_pwd(char **args);
+int			builtin_pwd(char **args, t_shell *shell);
 int			builtin_export(char **args, t_shell *shell);
 int			builtin_unset(char **args, t_shell *shell);
 int			builtin_env(char **args, t_shell *shell);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_exec.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:52:02 by notjustlaw        #+#    #+#             */
-/*   Updated: 2025/09/29 18:14:22 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/10/01 15:07:26 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,12 @@ int	get_heredoc_input(const char *limiter, t_command *cmd)
 int	process_heredoc_list_for_cmd(t_command *cmd)
 {
 	t_heredoc	*h;
-	int			kept_fd;
+	int			last_fd = -1;
 
-	kept_fd = -1;
+	// Single heredoc shortcut
 	if ((!cmd->heredocs || cmd->heredocs == NULL) && cmd->heredoc && cmd->delimiter)
 	{
-		int fd;
-
-		fd = get_heredoc_input(cmd->delimiter, cmd);
+		int fd = get_heredoc_input(cmd->delimiter, cmd);
 		if (fd == -1)
 		{
 			if (prog_data()->heredoc_interrupted)
@@ -112,30 +110,33 @@ int	process_heredoc_list_for_cmd(t_command *cmd)
 		cmd->input_fd = fd;
 		return (0);
 	}
+
 	if (!cmd->heredocs)
 		return (0);
+
 	h = cmd->heredocs;
 	while (h)
 	{
 		int fd = get_heredoc_input(h->delim, cmd);
 		if (fd == -1)
 		{
-			if (kept_fd != -1)
-				close(kept_fd);
+			if (last_fd != -1)
+				close(last_fd);
 			if (prog_data()->heredoc_interrupted)
 				prog_data()->exit_status = 130;
 			return (1);
 		}
-		if (kept_fd != -1)
-			close(kept_fd);
-		kept_fd = fd;
+		if (h->next)
+			close(fd);      // Immediately close/discard all but last heredoc
+		else
+			last_fd = fd;   // Only the last one gets assigned
 		h = h->next;
 	}
-	if (kept_fd != -1)
+	if (last_fd != -1)
 	{
 		if (cmd->input_fd > 2)
 			close(cmd->input_fd);
-		cmd->input_fd = kept_fd;
+		cmd->input_fd = last_fd;
 	}
 	return (0);
 }

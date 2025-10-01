@@ -3,18 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: henrique-reis <henrique-reis@student.42    +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/09/29 21:35:01 by henrique-re      ###   ########.fr       */
+/*   Updated: 2025/10/01 16:41:32 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static t_command	*new_command(char *str, int i, int expand, char *stripped)
+static void	gather_heredocs(t_command *cmd, int *indices, int *count)
+{
+	int		i;
+	int		expand;
+	char	*stripped;
+
+	i = -1;
+	*count = 0;
+	while (cmd->args[++i])
+	{
+		expand = 0;
+		if (cmd->args[i + 1] && ft_strncmp(cmd->args[i], "<<", 3) == 0)
+		{
+			stripped = strip_quotes_and_get_delimiter(cmd->args[i + 1], &expand);
+			add_heredoc_delim(cmd, stripped);
+			cmd->heredoc = 1;
+			indices[*count] = i;
+			(*count)++;
+		}
+	}
+}
+
+static void	remove_heredoc_args(t_command *cmd, int *indices, int count)
+{
+	while (--count >= 0)
+		ft_remove_args(cmd, indices[count], 2);
+}
+
+static t_command	*new_command(char *str)
 {
 	t_command	*cmd;
+	int			heredoc_indices[256];
+	int			heredoc_count;
 
 	cmd = ft_calloc(sizeof(t_command), 1);
 	if (!cmd)
@@ -22,22 +52,8 @@ static t_command	*new_command(char *str, int i, int expand, char *stripped)
 	cmd->args = ft_split(str, '\2');
 	if (!cmd->args)
 		return (free(cmd), NULL);
-	while (cmd->args[++i])
-	{
-		if (cmd->args[i + 1] && ft_strncmp(cmd->args[i], "<<", 3) == 0)
-		{
-			stripped = strip_quotes_and_get_delimiter(cmd->args[i + 1],
-					&expand);
-			add_heredoc_delim(cmd, stripped);
-			cmd->heredoc = 1;
-			if (cmd->delimiter)
-				free(cmd->delimiter);
-			cmd->delimiter = ft_strdup(stripped);
-			cmd->heredoc_expand = expand;
-			ft_remove_args(cmd, i, 2);
-			continue ;
-		}
-	}
+	gather_heredocs(cmd, heredoc_indices, &heredoc_count);
+	remove_heredoc_args(cmd, heredoc_indices, heredoc_count);
 	return (cmd);
 }
 
@@ -63,7 +79,7 @@ static bool	build_commands(char **cmd_lst)
 	i = 0;
 	while (cmd_lst[i])
 	{
-		new_cmd = new_command(cmd_lst[i], -1, 0, NULL);
+		new_cmd = new_command(cmd_lst[i]);
 		if (!new_cmd)
 		{
 			free_double_ptr(cmd_lst);

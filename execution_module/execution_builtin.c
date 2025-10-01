@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:04:34 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/25 13:08:16 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/10/01 17:05:23 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	execute_builtin(char **args, t_shell *shell)
 	else if (ft_strncmp(args[0], "echo", 5) == 0)
 		return (builtin_echo(args));
 	else if (ft_strncmp(args[0], "pwd", 4) == 0)
-		return (builtin_pwd(args));
+		return (builtin_pwd(args, shell));
 	else if (ft_strncmp(args[0], "export", 7) == 0)
 		return (builtin_export(args, shell));
 	else if (ft_strncmp(args[0], "unset", 6) == 0)

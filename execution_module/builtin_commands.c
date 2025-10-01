@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:05:51 by justlaw           #+#    #+#             */
-/*   Updated: 2025/09/26 13:49:18 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/10/01 17:08:09 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ int	builtin_cd(char **args, t_shell *shell)
 	char	*target_dir;
 
 	old_pwd = getcwd(NULL, 0);
-	if (!old_pwd)
-		return (perror("cd: error retrieving current directory"), 1);
 	target_dir = args[1];
 	if (!target_dir)
 	{
@@ -62,43 +60,49 @@ int	builtin_cd(char **args, t_shell *shell)
 		if (!target_dir || *target_dir == '\0')
 		{
 			ft_putstr_fd("cd: HOME not set\n", 2);
-			free(old_pwd);
+			if (old_pwd) free(old_pwd);
 			return (1);
 		}
 	}
 	if (chdir(target_dir) != 0)
 	{
 		perror(target_dir);
-		free(old_pwd);
+		if (old_pwd) free(old_pwd);
 		return (prog_data()->exit_status = 1, 1);
 	}
 	new_pwd = getcwd(NULL, 0);
 	if (!new_pwd)
 	{
-		perror("cd: error retrieving new directory");
-		free(old_pwd);
+		fprintf(stderr, "cd: error retrieving current directory: %s\n", strerror(errno));
+		if (old_pwd) free(old_pwd);
 		return (prog_data()->exit_status = 1, 1);
 	}
-	set_env_var(&shell->envp, "OLDPWD", old_pwd);
+	set_env_var(&shell->envp, "OLDPWD", old_pwd ? old_pwd : "");
 	set_env_var(&shell->envp, "PWD", new_pwd);
-	free(old_pwd);
+	if (old_pwd) free(old_pwd);
 	free(new_pwd);
 	return (0);
 }
 
-int	builtin_pwd(char **args)
+int	builtin_pwd(char **args, t_shell *shell)
 {
-	char	*dir;
+	char	*pwd;
 
 	(void)args;
-	dir = getcwd(NULL, 0);
-	if (!dir)
+	pwd = get_env_value(shell->envp, "PWD");
+	if (pwd && *pwd)
+		printf("%s\n", pwd);
+	else
 	{
-		perror("pwd");
-		return (1);
+		char *dir = getcwd(NULL, 0);
+		if (!dir)
+		{
+			fprintf(stderr, "pwd: error retrieving current directory: %s\n", strerror(errno));
+			return (1);
+		}
+		printf("%s\n", dir);
+		free(dir);
 	}
-	printf("%s\n", dir);
-	free(dir);
 	return (0);
 }
 
