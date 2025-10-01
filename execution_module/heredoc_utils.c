@@ -3,44 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skuhlcke <skuhlcke@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:00:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/29 18:21:52 by skuhlcke         ###   ########.fr       */
+/*   Updated: 2025/10/01 18:39:10 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 /* append a delimiter to the command's heredoc list (takes ownership of delim) */
-void add_heredoc_delim(t_command *cmd, char *delim)
+void	add_heredoc_delim(t_command *cmd, char *delim, int expand)
 {
-	t_heredoc *node;
-	t_heredoc *it;
+	t_heredoc	*new;
+	t_heredoc	*tmp;
 
-	if (!cmd || !delim)
-	{
-		if (delim)
-			free(delim);
-		return;
-	}
-	node = malloc(sizeof(t_heredoc));
-	if (!node)
-	{
-		free(delim);
-		return;
-	}
-	node->delim = delim;
-	node->next = NULL;
+	new = malloc(sizeof(t_heredoc));
+	if (!new)
+		return ;
+	new->delim = delim;
+	new->expand = expand;
+	new->next = NULL;
 	if (!cmd->heredocs)
+		cmd->heredocs = new;
+	else
 	{
-		cmd->heredocs = node;
-		return;
+		tmp = cmd->heredocs;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
 	}
-	it = cmd->heredocs;
-	while (it->next)
-		it = it->next;
-	it->next = node;
 }
 
 /* free all heredoc delimiter nodes for a command and clear pointer */

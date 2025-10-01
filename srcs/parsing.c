@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 17:15:37 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/10/01 16:41:32 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/10/01 18:38:53 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	gather_heredocs(t_command *cmd, int *indices, int *count)
 		if (cmd->args[i + 1] && ft_strncmp(cmd->args[i], "<<", 3) == 0)
 		{
 			stripped = strip_quotes_and_get_delimiter(cmd->args[i + 1], &expand);
-			add_heredoc_delim(cmd, stripped);
+			add_heredoc_delim(cmd, stripped, expand);
 			cmd->heredoc = 1;
 			indices[*count] = i;
 			(*count)++;

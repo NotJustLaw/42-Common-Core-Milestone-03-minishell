@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:52:02 by notjustlaw        #+#    #+#             */
-/*   Updated: 2025/10/01 15:07:26 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/10/01 18:41:58 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	setup_heredoc_signals(void)
 	sigaction(SIGQUIT, &sa, NULL);
 }
 
-int	get_heredoc_input(const char *limiter, t_command *cmd)
+int	get_heredoc_input(const char *limiter, int expand)
 {
 	int		here_pipe[2];
 	char	*line;
@@ -66,7 +66,7 @@ int	get_heredoc_input(const char *limiter, t_command *cmd)
 			free(line);
 			break ;
 		}
-		if (cmd && cmd->heredoc_expand)
+		if (expand)
 		{
 			char *orig = line;
 			line = expand_argument_heredoc(orig);
@@ -98,7 +98,7 @@ int	process_heredoc_list_for_cmd(t_command *cmd)
 	// Single heredoc shortcut
 	if ((!cmd->heredocs || cmd->heredocs == NULL) && cmd->heredoc && cmd->delimiter)
 	{
-		int fd = get_heredoc_input(cmd->delimiter, cmd);
+		int fd = get_heredoc_input(cmd->delimiter, cmd->heredoc_expand);
 		if (fd == -1)
 		{
 			if (prog_data()->heredoc_interrupted)
@@ -117,7 +117,7 @@ int	process_heredoc_list_for_cmd(t_command *cmd)
 	h = cmd->heredocs;
 	while (h)
 	{
-		int fd = get_heredoc_input(h->delim, cmd);
+		int fd = get_heredoc_input(h->delim, h->expand);
 		if (fd == -1)
 		{
 			if (last_fd != -1)

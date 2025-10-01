@@ -6,7 +6,7 @@
 /*   By: notjustlaw <notjustlaw@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 11:32:38 by hcarrasq          #+#    #+#             */
-/*   Updated: 2025/10/01 17:05:12 by notjustlaw       ###   ########.fr       */
+/*   Updated: 2025/10/01 18:42:26 by notjustlaw       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@
 # include <sys/stat.h>
 # include <sys/ioctl.h>
 
-/* small linked list to hold multiple heredoc delimiters per command */
 typedef struct s_heredoc
 {
 	char				*delim;
+	int					expand;
 	struct s_heredoc	*next;
 }	t_heredoc;
 
@@ -58,8 +58,6 @@ typedef struct s_command
 	int					heredoc_expand;
 	char				*delimiter;
 	int					redirection_failed;
-
-	/* new: list of heredoc delimiters (left-to-right order) */
 	t_heredoc			*heredocs;
 }	t_command;
 
@@ -109,7 +107,7 @@ void		ft_execve(t_shell *shell, t_command *cmds);
 void		execute_all(t_command *cmds, t_shell *shell);
 int			execute_single_command(t_command *cmds, t_shell *shell);
 int			execute_pipeline(t_command *cmds, t_shell *shell);
-int			get_heredoc_input(const char *limiter, t_command *cmd);
+int     	get_heredoc_input(const char *limiter, int expand);
 char		*expand_argument_heredoc(const char *arg);
 
 //Exec Helpers
@@ -120,7 +118,7 @@ void		apply_redirections(t_command *cmd);
 char		*strip_quotes_and_get_delimiter(const char *raw_delim, int *expand);
 
 /* helpers to manage heredoc list on a command */
-void		add_heredoc_delim(t_command *cmd, char *delim);
+void		add_heredoc_delim(t_command *cmd, char *delim, int expand);
 void		free_heredoc_list(t_command *cmd);
 
 //Builtin
